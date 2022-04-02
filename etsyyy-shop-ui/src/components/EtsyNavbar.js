@@ -41,11 +41,10 @@ function EtsyNavbar(props) {
           <LinkContainer to="/">
             <Navbar.Brand className="logo">ETSYYY</Navbar.Brand>
           </LinkContainer>
-          <SearchBox></SearchBox>
+          <SearchBox />
           <Nav className="me-auto justify-content-center">
             {isLoggedIn ? (
               <Link to="/favorites" className="nav-link" style={{color: "black"}}>
-                {/* Favorites */}
                 <FavoriteBorderOutlined />
               </Link>
             ) : (

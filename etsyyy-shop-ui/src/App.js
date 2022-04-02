@@ -33,7 +33,7 @@ function App() {
     <BrowserRouter>
       <div className="d-flex flex-column site-container">
         <header>
-          <EtsyNavbar></EtsyNavbar>
+          <EtsyNavbar />
         </header>
         <main>
           <Container className="mt-3">

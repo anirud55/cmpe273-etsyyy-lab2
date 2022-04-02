@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import axios from "axios";
 import Row from "react-bootstrap/Row";
+import styled from "styled-components"
 import Col from "react-bootstrap/Col";
 import Product from "../components/Product";
 import { useDispatch, useSelector } from "react-redux";
