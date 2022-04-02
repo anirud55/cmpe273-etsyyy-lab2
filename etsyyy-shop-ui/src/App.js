@@ -14,7 +14,7 @@ import EtsyNavbar from "./components/EtsyNavbar";
 import ProfilePage from "./pages/ProfilePage";
 import CreateShopPage from "./pages/CreateShopPage";
 import ShopPage from "./pages/ShopPage";
-import MuPurchasesPage from "./pages/MyPurchasesPage";
+import MyPurchasesPage from "./pages/MyPurchasesPage";
 import LoginModal from "./components/LoginModal";
 import FavoritesPage from "./pages/FavoritesPage";
 import SearchPage from "./pages/SearchPage";
@@ -47,30 +47,11 @@ function App() {
               <Route path="/home" element={<HomePage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/myorders" element={<MuPurchasesPage />} />
+              <Route path="/myorders" element={<MyPurchasesPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
             </Routes>
           </Container>
         </main>
-        {/* <footer>
-          <div className="page-footer">
-            <Dropdown
-              style={{ position: "absolute", left: "10px", bottom: "5px" }}
-              onSelect={currencyupdate}
-            >
-              {" "}
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Currency
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item eventKey="$">USD($)</Dropdown.Item>
-                <Dropdown.Item eventKey="₹">INR(₹)</Dropdown.Item>
-                <Dropdown.Item eventKey="€">EURO(€)</Dropdown.Item>
-                <Dropdown.Item eventKey="£">GBP(£)</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        </footer> */}
         <Footer />
       </div>
     </BrowserRouter>
