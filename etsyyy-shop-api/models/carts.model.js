@@ -1,41 +1,40 @@
 const mongoose = require('mongoose')
 const {ObjectId} = mongoose.Schema
 
-const ShopSchema = new mongoose.Schema({
-    shop_id :{
+const CartSchema = new mongoose.Schema({
+    id :{
         type:String,
         required:true
     },
-    owner_id :{
+    product_id :{
         type:String,
         required:true
     },
-    name:{
+    user_id:{
         type:String
     },
-    owner_name:{
+    seller_id:{
         type:String
     },
-    email: {
+    product_name: {
         type:String
     },
-    ph_number :{
+    img :{
         type:String
     },
-    currency:{
+    category:{
         type:String
     },
-    city:{
+    description:{
         type:String
     },
-    country: {
+    price: {
         type: String
     },
-    img: {
+    quantity:{
         type:String
     }
 }, 
     {timestamps:true}
 );
-
-module.exports = Shop = mongoose.model('Shop',ShopSchema)
+module.exports = Cart = mongoose.model('Cart',CartSchema)
