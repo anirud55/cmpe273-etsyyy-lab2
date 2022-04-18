@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         min:3,
-        max:64
+        max:15
     },
     gender: {
         type:String
@@ -41,9 +41,6 @@ const UserSchema = new mongoose.Schema({
         type:String
     },
     about:{
-        type:String
-    },
-    profile_img: {
         type:String
     },
     country:{
