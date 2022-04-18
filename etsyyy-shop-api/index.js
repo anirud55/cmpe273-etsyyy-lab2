@@ -2,13 +2,14 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
-// const routes = require("./routes");
-const dbConfig = require("./config/db.config.js");
+const dotenv = require('dotenv');
 
 var corsOptions = {
     origin: "*"
 };
 app.use(cors(corsOptions));
+
+dotenv.config();
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
@@ -19,9 +20,11 @@ app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 3001;
 
 mongoose
-    .connect(dbConfig.url, {
+    .connect(process.env.DB_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
+    }).then(() => {
+        console.log('Connected to MongoDB');
     })
     .catch(err => {
         console.log("Cannot connect to the database!", err);

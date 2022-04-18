@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const mongo = require('mongoose')
+const mongoose = require('mongoose')
 const dotenv = require('dotenv');
 const passport = require('passport')
 
@@ -10,14 +10,21 @@ dotenv.config();
 app.use(cors())
 app.use(passport.initialize())
 
-require('./src/controllers/passport.js')
+require('./src/controllers/passport')
 
-mongo.connect(process.env.DATABASE,{
-    useNewUrlParser:true,
-    useUnifiedTopology: true,
-}).then(()=>{
-    console.log('DB Connected');
-}).catch((err)=>{console.log(err)})
+mongoose
+    .connect(process.env.DB_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }).then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch(err => {
+        console.log("Cannot connect to the database!", err);
+        process.exit();
+    });
+
+mongoose.Promise = global.Promise;
  
 
 //Init Middleware
@@ -29,11 +36,11 @@ app.use('/api/dashboard',require('./src/routes/dashboard.routes'))
 app.use('/api/order',require('./src/routes/order.routes'))
 app.use('/api/products',require('./src/routes/products.routes'))
 
-const PORT = process.env.PORT || 8585
+const PORT = process.env.PORT || 3002
 
 
 app.listen(PORT,(req,res)=>{
-    console.log("Srever running on port 8585")
+    console.log(`Server is running on port ${PORT}.`);
 })
 
 module.exports = app
