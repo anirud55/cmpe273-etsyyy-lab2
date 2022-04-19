@@ -3,7 +3,7 @@ const actions = require('./../action/actions.json')
 
 const shop = require('./../services/shop')
 
-conn.getConsumer('sellers',(consumer) => {
+conn.getConsumer('shops',(consumer) => {
     
     var producer = conn.getProducer()
 

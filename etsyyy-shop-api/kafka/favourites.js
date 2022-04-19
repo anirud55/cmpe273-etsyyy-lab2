@@ -1,7 +1,7 @@
 const conn = require('./connection')
 const actions = require('./../action/actions.json')
 
-const user = require('./../services/user')
+const user = require('./../services/users')
 
 conn.getConsumer('favorites',(consumer) => {
     
