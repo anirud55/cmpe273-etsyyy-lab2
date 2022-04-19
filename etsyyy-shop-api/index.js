@@ -33,6 +33,14 @@ mongoose
 
 mongoose.Promise = global.Promise;
 
+//kafka messages
+require('./kafka/consume')
+require('./kafka/user')
+require('./kafka/favourites')
+require('./kafka/shop')
+require('./kafka/product')
+require('./kafka/order')
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
