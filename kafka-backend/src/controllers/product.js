@@ -1,7 +1,7 @@
 const ec = require('./../../config/elasticClient')
 
 const kafka = require('./../../kafka/client')
-const actions = require('./../../actions/actions.json')
+const actions = require('./../../action/actions.json')
 
 exports.create = async (req,res)=>{
     const {sellerId,name,category,description,price,quantity,img} = req.body
