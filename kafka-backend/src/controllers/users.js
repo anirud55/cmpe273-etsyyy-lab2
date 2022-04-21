@@ -2,6 +2,7 @@ const kafka = require('./../../kafka/client')
 const actions = require('./../../action/actions.json')
 
 exports.createUser = async (req, res) => {
+    console.log(req.body);
     const { first_name, email, password } = req.body
     kafka.sendKafkaRequest('users',{ first_name, email, password, action:actions.CREATE_USER },(err,data) =>{
         if(err) return res.status(400).json({message:err})

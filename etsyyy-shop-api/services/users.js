@@ -5,7 +5,7 @@ const prodmod = require('./../models/products.model')
 const bcrypt = require('bcrypt')
 
 exports.createUser = async (msg_payload, callback) => {
-    const { firstName, email, password } = msg_payload
+    const { first_name, email, password } = msg_payload
     try {
         const User = await usersmod.findOne({email}).exec()
         if(User){
@@ -16,7 +16,7 @@ exports.createUser = async (msg_payload, callback) => {
         
         const user = new usersmod({
             id:uuid(),
-            first_name : firstName,
+            first_name : first_name,
             email: email,
             password: encrypted
         })
@@ -37,7 +37,7 @@ exports.updateUser = async (msg_payload,callback) => {
     console.log("------msg_payload-", msg_payload)
     const {
         id,
-        firstName,
+        first_name,
         lastName,
         email,
         gender,
@@ -56,7 +56,7 @@ exports.updateUser = async (msg_payload,callback) => {
         if(user){
             const id = user._id
             user.update({
-                first_name:firstName,
+                first_name:first_name,
                 last_name:lastName,
                 email:email,
                 gender:gender,

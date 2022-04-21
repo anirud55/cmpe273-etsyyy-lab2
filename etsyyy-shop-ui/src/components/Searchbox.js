@@ -39,7 +39,6 @@ export default function SearchBox(props) {
               color: "white",
               fontSize: 20,
               border: "none",
-              "background-color": "teal",
             }} />
         </Button>
       </InputGroup>

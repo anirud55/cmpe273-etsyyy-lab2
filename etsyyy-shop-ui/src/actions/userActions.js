@@ -54,7 +54,7 @@ export const signup = (name, email, password) => async (dispatch) => {
   axios.defaults.withCredentials = true;
 
   axios
-    .post(BACKEND + "/signup", data)
+    .post(BACKEND + "/users/login", data)
     .then((response) => {
       console.log("Status Code : ", response.status);
       if (response.status === 200) {
