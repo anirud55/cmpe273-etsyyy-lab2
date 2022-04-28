@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import defaultProfileImg from './../../images/defaultProfileImg.png'
 import countries from './../utils/countries.json'
-import {s3,bucketName} from './../../aws-config/aws'
+import { s3, bucketName } from './../../aws-config/aws'
 import constants from './../../utils/constants.json'
 
 const EditProfile = () => {
@@ -13,7 +13,7 @@ const EditProfile = () => {
     const [userId, setUserId] = useState()
     const [profileUpdated, setProfileUpdated] = useState(false)
     const [editName, setEditName] = useState(false)
-    const [profile_img,setProfileImg] = useState()
+    const [profile_img, setProfileImg] = useState()
     const [nameForm, setNameForm] = useState({
         fNmae: "", lName: ""
     })
@@ -29,13 +29,13 @@ const EditProfile = () => {
         country: "",
         about: "",
         dob: "",
-        profile_img:""
+        profile_img: ""
     })
 
 
 
     useEffect(async () => {
-        const { data } = await axios.post(constants.uri+"/users/auth")
+        const { data } = await axios.post(constants.uri + "/users/auth")
         setUserId(data.id)
         setFormData({
             ...formData,
@@ -50,7 +50,7 @@ const EditProfile = () => {
             address: data.address,
             zip_code: data.zip_code,
             contact_number: data.contact_number,
-            profile_img:data.profile_img
+            profile_img: data.profile_img
         }
         )
     }, [])
@@ -106,8 +106,8 @@ const EditProfile = () => {
             })
         }))
         const imageUrl = uploadUrl.split('?')[0]
-        console.log("Image URL: ",imageUrl)
-        const res = await axios.post(constants.uri+"/users/update-profile", { ...formData, id: userId, profile_img: imageUrl })
+        console.log("Image URL: ", imageUrl)
+        const res = await axios.post(constants.uri + "/users/update-profile", { ...formData, id: userId, profile_img: imageUrl })
         console.log(res)
         if (res.status === 200) {
             toast.success("User Profile Updated")
@@ -133,7 +133,7 @@ const EditProfile = () => {
                             </Col>
                             <Col sm={3}></Col>
                             <Col>
-                               
+
                                 <Form.Group controlId="formFile" className="mb-3">
                                     <Form.Label>Upload a new picture</Form.Label>
                                     <Form.Control type="file"
@@ -275,7 +275,17 @@ const EditProfile = () => {
                             </Col>
                         </Row>
                     </Card.Text>
-                    <Button style={{ width: "100%" }} className="rounded-pill" variant="warning" onClick={() => saveChanges()}>Save Changes</Button>
+                    <Button
+                        style={{
+                            width: "100%",
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={() => saveChanges()}>
+                        Save Changes
+                    </Button>
                 </Card.Body>
             </Card>
 
@@ -299,10 +309,26 @@ const EditProfile = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-secondary" className='rounded-pill' onClick={() => setEditName(false)}>
+                    <Button
+                        style={{
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={() => setEditName(false)}>
                         Close
                     </Button>
-                    <Button variant="outline-warning" className='rounded-pill' onClick={() => updateName()}>Update</Button>
+                    <Button
+                        style={{
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={() => updateName()}>
+                        Update
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </Fragment>

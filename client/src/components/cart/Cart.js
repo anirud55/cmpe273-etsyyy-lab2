@@ -13,7 +13,7 @@ const Cart = () => {
     const [currency, setCurrency] = useState()
     const [subtotal, setsubtotal] = useState(0)
 
-    const [giftDescShow,setGiftDescShow] = useState(false)
+    const [giftDescShow, setGiftDescShow] = useState(false)
 
 
     useEffect(async () => {
@@ -79,26 +79,26 @@ const Cart = () => {
         }
     }
 
-    const giftWrap = (e,item) => {
+    const giftWrap = (e, item) => {
         e.preventDefault()
-        if(e.target.checked){
+        if (e.target.checked) {
             setGiftDescShow(true)
             item.giftWrap = true
-        }else{
+        } else {
             setGiftDescShow(false)
             item.giftWrap = false
         }
     }
 
-    const giftDescription = (e,item) => {
+    const giftDescription = (e, item) => {
         e.preventDefault()
-        if(e.target.value){
+        if (e.target.value) {
             item.giftDecscription = e.target.value
         }
     }
 
     if (orderPlaced) {
-       return <Navigate to="/myOrders" />
+        return <Navigate to="/myOrders" />
     }
 
     return (
@@ -135,25 +135,34 @@ const Cart = () => {
                                                 <Form.Check
                                                     type="checkbox"
                                                     label="Gift wrap"
-                                                    onChange={(e)=>giftWrap(e,item)}
+                                                    onChange={(e) => giftWrap(e, item)}
                                                 />
                                             </Col>
                                             <Col>
                                             </Col>
                                         </Row>
-                                        { giftDescShow && (<Row>
+                                        {giftDescShow && (<Row>
                                             <span>
                                                 <Form.Control
                                                     type="text"
                                                     placeholder='Gift Description'
-                                                    onChange={(e)=>giftDescription(e,item)}
+                                                    onChange={(e) => giftDescription(e, item)}
                                                 />
                                             </span>
                                         </Row>
                                         )}
                                         <br />
                                         <Row>
-                                            <Button variant='outline-danger' onClick={() => removeFromCart(item)} className='rounded-pill'>Remove from Cart</Button>
+                                            <Button
+                                                style={{
+                                                    border: "none",
+                                                    "background-color": "teal",
+                                                    "color": "white",
+                                                    "cursor": "pointer"
+                                                }}
+                                                onClick={() => removeFromCart(item)}>
+                                                Remove
+                                            </Button>
                                         </Row>
                                     </Col>
                                     <Col sm={1}>
@@ -185,7 +194,16 @@ const Cart = () => {
                             </Row>
                             <br />
                             <Row>
-                                <Button variant='success' onClick={(e) => { placeOrder(e) }} className='rounded-pill'>Place Order</Button>
+                                <Button
+                                    style={{
+                                        border: "none",
+                                        "background-color": "teal",
+                                        "color": "white",
+                                        "cursor": "pointer"
+                                    }}
+                                    onClick={(e) => { placeOrder(e) }}>
+                                    Place Order
+                                </Button>
                             </Row>
                         </Card.Body>
                     </Card>

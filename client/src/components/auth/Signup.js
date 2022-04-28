@@ -10,7 +10,7 @@ import constants from './../../utils/constants.json'
 const Signup = ({ showModal, setShowModal }) => {
     const [signin, setSignin] = useState(true)
     const [register, setRegister] = useState(false)
-    const [loggedIn,setLoggedIn] = useState(false)
+    const [loggedIn, setLoggedIn] = useState(false)
 
 
     const handleRegister = (e) => {
@@ -25,14 +25,14 @@ const Signup = ({ showModal, setShowModal }) => {
         password: ""
     })
 
-    const [loginForm,setLoginForm] = useState({
-        loginEmail:"",
-        loginPassword:""
+    const [loginForm, setLoginForm] = useState({
+        loginEmail: "",
+        loginPassword: ""
     })
 
     const { email, first_name, password } = registerForm
 
-    const {loginEmail,loginPassword} = loginForm
+    const { loginEmail, loginPassword } = loginForm
 
     const onChangeData = e => {
         e.preventDefault()
@@ -41,7 +41,7 @@ const Signup = ({ showModal, setShowModal }) => {
 
     const onChangeLoginData = e => {
         e.preventDefault()
-        setLoginForm({...loginForm,[e.target.name]:e.target.value})
+        setLoginForm({ ...loginForm, [e.target.name]: e.target.value })
         console.log(loginForm)
     }
 
@@ -49,27 +49,27 @@ const Signup = ({ showModal, setShowModal }) => {
         e.preventDefault()
         console.log(registerForm)
         try {
-            const res = await axios.post(constants.uri+"/users/register", registerForm)
+            const res = await axios.post(constants.uri + "/users/register", registerForm)
             if (res.status === 200) {
-                window.localStorage.setItem("userdetails",res.data.token)
+                window.localStorage.setItem("userdetails", res.data.token)
                 setShowModal(false)
-                toast.success("Registered",{
+                toast.success("Registered", {
                     position: "top-center",
                 })
                 setLoggedIn(true)
             }
         } catch (error) {
             setShowModal(false)
-            toast("Sorry, Try again",{position:"top-center"})
+            toast("Sorry, Try again", { position: "top-center" })
         }
     }
 
     const onSubmitLogin = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post(constants.uri+"/users/login",{email:loginForm.loginEmail,password:loginForm.loginPassword})
-            if(res.status === 200 ){
-                window.localStorage.setItem("userdetails",res.data.token)
+            const res = await axios.post(constants.uri + "/users/login", { email: loginForm.loginEmail, password: loginForm.loginPassword })
+            if (res.status === 200) {
+                window.localStorage.setItem("userdetails", res.data.token)
                 setShowModal(false)
                 toast.success("Loggedin", {
                     position: "top-center",
@@ -79,14 +79,14 @@ const Signup = ({ showModal, setShowModal }) => {
             }
         } catch (error) {
             setShowModal(false)
-            toast("Sorry, Try again",{position:"top-center"})
+            toast("Sorry, Try again", { position: "top-center" })
         }
     }
 
     toast.configure()
 
-    if(loggedIn){
-        return <Navigate to="/dashboard"/>
+    if (loggedIn) {
+        return <Navigate to="/dashboard" />
     }
 
     return (
@@ -102,10 +102,17 @@ const Signup = ({ showModal, setShowModal }) => {
                     <Modal.Title id="contained-modal-title-vcenter">
                         <Row>
                             <Col sm={8}>
-                                Sign in
+                                SIGN IN
                             </Col>
                             <Col sm={4}>
-                                <Button variant="outline-warning" onClick={(e => { handleRegister(e) })} className='float-right rounded-pill '>Register</Button>
+                                <Button onClick={(e => { handleRegister(e) })}
+                                    style={{
+                                        border: "none",
+                                        "background-color": "teal",
+                                        "color": "white",
+                                        "cursor": "pointer"
+                                    }}
+                                    className='float-right'>SIGNUP</Button>
                             </Col>
                         </Row>
                     </Modal.Title>
@@ -114,27 +121,22 @@ const Signup = ({ showModal, setShowModal }) => {
                     {signin && !register && (
                         <Form>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" name="loginEmail"  value={loginEmail} onChange={(e)=>onChangeLoginData(e)} placeholder="Enter email" />
+                                <Form.Control type="email" name="loginEmail" value={loginEmail} onChange={(e) => onChangeLoginData(e)} placeholder="Enter Email Address" />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" name="loginPassword" value={loginPassword} onChange={(e)=>onChangeLoginData(e)} placeholder="Password" />
+                                <Form.Control type="password" name="loginPassword" value={loginPassword} onChange={(e) => onChangeLoginData(e)} placeholder="Enter Password" />
                             </Form.Group>
-                            <Row>
-                                <Col>
-                                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                                        <Form.Check type="checkbox" label="Keep me Signed In" />
-                                    </Form.Group>
-                                </Col>
-                                <Col>
-                                    <span>Forgort Password?</span>
-                                </Col>
-                            </Row>
-
-                            <Button style={{ width: "100%" }} variant="warning" onClick={(e)=>onSubmitLogin(e)} className="rounded-pill" type="submit">
-                                Sign in
+                            <Button
+                                style={{
+                                    width: "40%",
+                                    border: "none",
+                                    "background-color": "teal",
+                                    "color": "white",
+                                    "cursor": "pointer"
+                                }}
+                                onClick={(e) => onSubmitLogin(e)} type="submit">
+                                SIGN IN
                             </Button>
                         </Form>
                     )}
@@ -142,23 +144,30 @@ const Signup = ({ showModal, setShowModal }) => {
                     {!signin && register && (
                         <Form>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" name="email" value={email} placeholder="Enter email" onChange={(e) => onChangeData(e)} />
+                                <Form.Control type="email" name="email" value={email} placeholder="Enter Email Address" onChange={(e) => onChangeData(e)} />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicName">
-                                <Form.Label>First Name</Form.Label>
-                                <Form.Control type="text" name="first_name" value={first_name} placeholder="First Name" onChange={(e) => onChangeData(e)} />
+                                <Form.Control type="text" name="first_name" value={first_name} placeholder="Enter First Name" onChange={(e) => onChangeData(e)} />
                             </Form.Group>
 
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" name="password" value={password} placeholder="Password" onChange={(e) => onChangeData(e)} />
+                                <Form.Control type="password" name="password" value={password} placeholder=" Enter Password" onChange={(e) => onChangeData(e)} />
                             </Form.Group>
 
-                            <Button style={{ width: "100%" }} variant="warning" onClick={(e) => onSubmitRegister(e)} className="rounded-pill" type="submit">
-                                Register
+                            <Button style={{
+                                width: "40%",
+                                border: "none",
+                                "background-color": "teal",
+                                "color": "white",
+                                "cursor": "pointer"
+                            }}
+                                onClick={(e) =>
+                                    onSubmitRegister(e)
+                                }
+                                type="submit">
+                                SIGNUP
                             </Button>
                         </Form>
                     )}

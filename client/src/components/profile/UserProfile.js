@@ -125,7 +125,14 @@ const UserProfile = props => {
                                     value={searchFav}
                                     onChange={(e)=>onChangeSearchFav(e)}
                                 />
-                                <Button variant="outline-warning" onClick={()=>search()}> <i class="fa fa-search" aria-hidden="true"></i></Button>
+                                <Button 
+                                style={{
+                                    border: "none",
+                                    "background-color": "teal",
+                                    "color": "white",
+                                    "cursor": "pointer"
+                                }}
+                                onClick={()=>search()}> <i class="fa fa-search" aria-hidden="true"></i></Button>
                             </Form>
                         </Col>
                     </Row>

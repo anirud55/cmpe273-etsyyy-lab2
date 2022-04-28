@@ -7,14 +7,14 @@ import { s3, bucketName } from './../../aws-config/aws.js'
 import { toast } from 'react-toastify'
 import constants from './../../utils/constants.json'
 
-const AddItem = ({ addItem, setAddItem, sellerId, shop }) => {
+const AddItem = ({ addItem, setAddItem, shopId, shop }) => {
     const [formData, setFormData] = useState({
         name: "",
         category: "Clothing",
         price: "",
         description: "",
         quantity: "",
-        sellerId: ""
+        shopId: ""
     })
 
     const [img, setImg] = useState()
@@ -59,14 +59,14 @@ const AddItem = ({ addItem, setAddItem, sellerId, shop }) => {
                 })
             }))
             const imageUrl = uploadUrl.split('?')[0]
-            const res = await axios.post(constants.uri+"/shop/addItem", { ...formData, sellerId, img: imageUrl })
+            const res = await axios.post(constants.uri + "/shop/addItem", { ...formData, shopId, img: imageUrl })
             if (res.data) {
                 toast.success("New Item added")
                 setAddItem(false)
                 window.location.reload(false)
             }
         } catch (error) {
-                toast("Failed to save new item!")
+            toast("Failed to save new item!")
         }
 
     }
@@ -212,7 +212,16 @@ const AddItem = ({ addItem, setAddItem, sellerId, shop }) => {
 
             </Modal.Body>
             <Modal.Footer>
-                <Button varaint="warning" className="rounded-pill" onClick={(e) => saveItem(e)} >Save Changes</Button>
+                <Button
+                    style={{
+                        border: "none",
+                        "background-color": "teal",
+                        "color": "white",
+                        "cursor": "pointer"
+                    }}
+                    onClick={(e) => saveItem(e)} >
+                    Save Changes
+                </Button>
             </Modal.Footer>
         </Modal >
     )

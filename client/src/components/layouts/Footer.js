@@ -110,7 +110,6 @@ const Footer = () => {
     }, [])
 
     return (
-
         <Fragment >
             <Container>
                 <Left>
@@ -167,7 +166,15 @@ const Footer = () => {
             <Row style={{ margin: 0 }}>
                 <Col sm={2}></Col>
                 <Col sm={6}>
-                    <Button className='rounded-pill' onClick={() => setSHowCountrySettings(true)} variant='outline-primary'>{country} {'     '}| {'      '}({currency}) </Button>
+                    <Button style={{
+                        width: "30%", border: "none",
+                        "padding": "15px 20px",
+                        "background-color": "teal",
+                        "color": "white",
+                        "cursor": "pointer",
+                        "margin-bottom": "10px"
+                    }}
+                        onClick={() => setSHowCountrySettings(true)} variant='outline-primary'>{country} {'     '}| {'      '}({currency}) </Button>
                 </Col>
             </Row>
 
@@ -184,16 +191,28 @@ const Footer = () => {
                     </Form.Select>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setSHowCountrySettings(false)}>
+                    <Button
+                        style={{
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={() => setSHowCountrySettings(false)}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={() => changeCountryAndCurrency()}>
+                    <Button
+                        style={{
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={() => changeCountryAndCurrency()}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-
         </Fragment>
     )
 }

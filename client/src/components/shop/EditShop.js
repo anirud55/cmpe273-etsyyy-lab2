@@ -36,7 +36,7 @@ const EditShop = ({ editShop, setEditShop, shopName, shop }) => {
             var uploadUrl = ""
             var imageUrl = shop.img
             if (img) {
-                console.log("-------s3",s3)
+                console.log("-------s3", s3)
                 uploadUrl = await s3.getSignedUrlPromise('putObject', params)
                 await fetch(new Request(uploadUrl, {
                     method: "PUT",
@@ -48,22 +48,22 @@ const EditShop = ({ editShop, setEditShop, shopName, shop }) => {
                 imageUrl = uploadUrl.split('?')[0]
             }
 
-            console.log( {
-                name: updateFormData.name? updateFormData.name : shopName,
+            console.log({
+                name: updateFormData.name ? updateFormData.name : shopName,
                 email: updateFormData.email,
                 ownerName: updateFormData.owner_name,
                 phNumber: updateFormData.ph_number,
-                sellerId: shop.seller_id,
+                shopId: shop.shop_id,
                 img: imageUrl
             })
-           
+
             const res = await axios.post(constants.uri + "/shop/update",
                 {
-                    name: updateFormData.name? updateFormData.name : shopName,
+                    name: updateFormData.name ? updateFormData.name : shopName,
                     email: updateFormData.email,
                     ownerName: updateFormData.owner_name,
                     phNumber: updateFormData.ph_number,
-                    sellerId: shop.seller_id,
+                    shopId: shop.shop_id,
                     img: imageUrl
                 })
             console.log(res)
@@ -73,7 +73,7 @@ const EditShop = ({ editShop, setEditShop, shopName, shop }) => {
                 console.log(shop)
                 setEditShop(false)
                 setUpdated(true)
-               // window.location.reload(false)
+                // window.location.reload(false)
             }
         } catch (error) {
             console.log(error)
@@ -191,7 +191,16 @@ const EditShop = ({ editShop, setEditShop, shopName, shop }) => {
                         </Card>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button varaint="warning" className="rounded-pill" onClick={(e) => updateShop(e)} >Save Changes</Button>
+                        <Button
+                            style={{
+                                border: "none",
+                                "background-color": "teal",
+                                "color": "white",
+                                "cursor": "pointer"
+                            }}
+                            onClick={(e) => updateShop(e)} >
+                            Save Changes
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             )}

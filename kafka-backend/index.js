@@ -1,16 +1,23 @@
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const mongoose = require('mongoose')
+const express = require("express");
+const app = express();
+const cors = require("cors");
+const mongoose = require("mongoose");
 const dotenv = require('dotenv');
-const passport = require('passport')
+
+var corsOptions = {
+    origin: "*"
+};
+app.use(cors(corsOptions));
 
 dotenv.config();
 
-app.use(cors())
-app.use(passport.initialize())
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+// app.use('/', routes);
+// app.use(express.static(__dirname + '/dist'));
 
-require('./src/controllers/passport')
+// set port, listen for requests
+const PORT = process.env.PORT || 3001;
 
 mongoose
     .connect(process.env.DB_URL, {
@@ -25,22 +32,15 @@ mongoose
     });
 
 mongoose.Promise = global.Promise;
- 
 
-//Init Middleware
-app.use(express.json({extended:false}))
+//kafka messages
+require('./kafka/consume')
+require('./kafka/user')
+require('./kafka/favourites')
+require('./kafka/shop')
+require('./kafka/product')
+require('./kafka/order')
 
-app.use('/api/users',require('./src/routes/user'))
-app.use('/api/shop',require('./src/routes/shop'))
-app.use('/api/dashboard',require('./src/routes/landingpage'))
-app.use('/api/order',require('./src/routes/order'))
-app.use('/api/products',require('./src/routes/products'))
-
-const PORT = process.env.PORT || 3002
-
-
-app.listen(PORT,(req,res)=>{
-    console.log(`Server is running on port ${PORT}.`);
-})
-
-module.exports = app
+app.listen(PORT, () => {
+    console.log(`+=+=+=+=+=Kafka Running on port: ${PORT}+=+=+=+=+=`);
+  });

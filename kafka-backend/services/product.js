@@ -1,0 +1,156 @@
+const prodmod = require('./../models/products.model')
+const uuid = require('uuid').v4
+
+exports.createProduct = async (payload,cb) => {
+    const {shopId,name,category,description,price,quantity,img} = payload
+    try {
+        const product = new prodmod({
+            product_id: uuid(),
+            shop_id:shopId,
+            name,
+            category,
+            description,
+            price,
+            quantity,
+            img
+        })
+
+        await product.save((err,data)=>{
+            if(err) return cb(err,null)
+            return cb(null,"Product Added")
+        })
+
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.editProduct = async (payload,cb) => {
+    const {productId,name,category,description,price,quantity,img} = payload
+    try {
+        const product = await prodmod.findOne({product_id:productId}).exec()
+        if(product){
+            product.update({
+                name,category,description,price,quantity,img
+            },(err,data) => {
+                if(err) return cb(err,null)
+                return cb(null,"Product Updated")
+            })
+        }
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getItems = async (payload,cb) => {
+    const {shopId} = payload
+    try {
+        const products = await prodmod.find({shop_id:shopId}).exec()
+        if(products){
+            return cb(null,products)
+        }
+        return cb("No Products found",null)
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getProducts = async (payload,cb) => {
+    try {
+        const products = await prodmod.find().exec()
+
+        if(products){
+            return cb(null,products)
+        }
+        return cb("No products",null)
+
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getProductById = async (payload,cb) => {
+    const {productId} = payload
+    try {
+        const product = await prodmod.findOne({product_id:productId}).exec()
+        if(product){
+            return cb(null,product)
+        }
+        return cb("No product found",null)
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getProductsByCategory = async (payload,cb) => {
+    const {category} = payload
+    try {
+        await prodmod.find({category},(err,data) => {
+            if(err) cb(err,null)
+            if(data)
+                return cb(null,data)
+        })
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getFilteredProducts =async (payload,cb) => {
+    const {category,price} = payload
+    try {
+        await prodmod.find({category,price},(err,data)=>{
+            if(err) return cb(err,null)
+            return cb(null,data)
+        })
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getFilteredProductsSortByPrice = async (payload,cb) => {
+    const {category,price,order} = payload
+    try {
+        await prodmod.find({category,price},(err,data)=>{
+            if(err) return cb(err,null)
+            return cb(null,data)
+        })
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getFilteredProductsSortByQuantity = async (payload,cb) => {
+    const {category,price,quantity,order} = payload
+    try {
+        await prodmod.find({category,price,quantity},(err,data)=>{
+            if(err) return cb(err,null)
+            return cb(null,data)
+        })
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+
+exports.getFilteredProductsSortBySales = async (payload,cb) => {
+    const {category,price,order} = payload
+    try {
+        await prodmod.productsSortBySales({category,price,order},(err,data)=>{
+            if(err) return cb(err,null)
+            return cb(null,data)
+        })
+    } catch (error) {
+        return cb(error,null)
+    }  
+}
+
+exports.searchProduct = async (payload,cb) => {
+    console.log("Consuming: ",payload)
+    const {searchParameter} = payload
+    try {
+        const products = await prodmod.find({name:searchParameter}).exec()
+        cb(null,products)
+    } catch (error) {
+        return cb(error,null)
+    }
+}
+prodmod.findById()

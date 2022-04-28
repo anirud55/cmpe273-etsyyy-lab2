@@ -9,6 +9,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import constants from './../../utils/constants.json'
 import { Link } from 'react-router-dom'
+import Slider from './Slider'
 
 const Dashboard = () => {
     const [products, setProducts] = useState([])
@@ -100,8 +101,11 @@ const Dashboard = () => {
                             <h2 style={{ textAlign: 'center' }}>Welcome  {user.first_name}!</h2>
                         )}
 
-                        <h3 style={{ textAlign: 'center' }}>Explore  our unique Products! Shop Now.</h3>
+                        <h3 style={{ textAlign: 'left' }}>Explore one-of-a-kind finds from independent makers</h3>
                     </Row>
+                    <br />
+                    <br />
+                    <Slider />
                     <br />
                     <br />
                     <Row>
@@ -153,7 +157,7 @@ const Dashboard = () => {
             </Card>
             <br />
             <Card>
-                <Card.Title style={{ marginRight: "10%", marginLeft: "10%", textAlign: 'center' }}>Discover our unique products! Shop NOW.</Card.Title>
+                <Card.Title style={{ marginRight: "10%", marginLeft: "10%", textAlign: 'left' }}>Discover unique hand-picked items --></Card.Title>
                 <Card.Body style={{ marginRight: "10%", marginLeft: "10%" }}>
                     {products && products.length > 0 && products.map(productRow => (
                         <Row>

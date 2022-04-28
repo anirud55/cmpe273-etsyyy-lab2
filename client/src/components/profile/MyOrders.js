@@ -41,7 +41,7 @@ const MyOrders = () => {
                                             </Col>
                                             <Col sm={2}>
                                                 <br/>
-                                                <Row><span>Seller: {order.shop_name}</span></Row>
+                                                <Row><span>Shop: {order.shop_name}</span></Row>
                                                 <br/>
                                                 {order.gift_wrap && (
                                                     <Row><span>GIFT WRAPED</span><span>Text: {order.gift_description}</span></Row>

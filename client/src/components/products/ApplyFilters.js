@@ -7,9 +7,9 @@ const ApplyFilters = ({ showApplyFilter, setShowApplyFilter, filters, setFilters
 
     const getCategoryValue = (e) => {
         e.preventDefault()
-        if(e.target.value === "All"){
+        if (e.target.value === "All") {
             setFilters({ ...filters, category: "" })
-            return 
+            return
         }
         setFilters({ ...filters, category: e.target.value })
     }
@@ -20,8 +20,8 @@ const ApplyFilters = ({ showApplyFilter, setShowApplyFilter, filters, setFilters
     }
 
     const apply = async () => {
-        const {category, price} = filters
-        const {data} = await axios.post(constants.uri+"/products/filter",{category,price})
+        const { category, price } = filters
+        const { data } = await axios.post(constants.uri + "/products/filter", { category, price })
         const grid = []
         for (var i = 0; i < data.length; i = i + 3) {
             var ar = []
@@ -83,8 +83,26 @@ const ApplyFilters = ({ showApplyFilter, setShowApplyFilter, filters, setFilters
                 </Row>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={() => setShowApplyFilter(false)}>Cancel</Button>
-                <Button onClick={() => apply()}>Apply</Button>
+                <Button
+                    style={{
+                        border: "none",
+                        "background-color": "teal",
+                        "color": "white",
+                        "cursor": "pointer"
+                    }}
+                    onClick={() => setShowApplyFilter(false)}>
+                    Cancel
+                </Button>
+                <Button
+                    style={{
+                        border: "none",
+                        "background-color": "teal",
+                        "color": "white",
+                        "cursor": "pointer"
+                    }}
+                    onClick={() => apply()}>
+                    Apply
+                </Button>
             </Modal.Footer>
         </Modal>
     )

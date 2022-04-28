@@ -15,8 +15,8 @@ const Shop = () => {
     const [shopName, setShopName] = useState("")
     const [editShop, setEditShop] = useState(false)
     const [addItem, setAddItem] = useState(false)
-    const [editItem,setEditItem] = useState(false)
-    const [itemToEdit,setItemToEdit] = useState({})
+    const [editItem, setEditItem] = useState(false)
+    const [itemToEdit, setItemToEdit] = useState({})
     const [shop, setShop] = useState({})
     const params = useParams()
 
@@ -25,9 +25,9 @@ const Shop = () => {
     useEffect(async () => {
         setShopName(params.name)
         const n = params.name
-        const res = await axios.post(constants.uri+"/shop/byname", { name: n })
-        const sellerId = res.data.seller_id
-        const { data } = await axios.post(constants.uri+"/shop/getItems", { sellerId })
+        const res = await axios.post(constants.uri + "/shop/byname", { name: n })
+        const shopId = res.data.shop_id
+        const { data } = await axios.post(constants.uri + "/shop/getItems", { shopId })
         setShop(res.data)
         var grid = []
         for (var i = 0; i < data.length; i = i + 3) {
@@ -39,7 +39,7 @@ const Shop = () => {
                 ar.push(data[i + 1])
             }
             if (data[i + 2]) {
-                ar.push(data[i+2])
+                ar.push(data[i + 2])
             }
             grid.push(ar)
         }
@@ -72,7 +72,19 @@ const Shop = () => {
                                     <Row><h4>{shopName}</h4></Row>
                                     <Row><span style={{ fontWeight: 'lighter', fontSize: 14 }}>0 Sales | Joined in 2022</span><br /></Row>
 
-                                    <Row><Button style={{ width: 'auto' }} className='rounded-pill' variant='outline-warning' onClick={() => setEditShop(true)}>Edit Shop</Button></Row>
+                                    <Row>
+                                        <Button
+                                            style={{
+                                                width: 'auto',
+                                                border: "none",
+                                                "background-color": "teal",
+                                                "color": "white",
+                                                "cursor": "pointer"
+                                            }}
+                                            onClick={() => setEditShop(true)}>
+                                            Edit Shop!
+                                        </Button>
+                                    </Row>
                                 </Col>
                                 <Col sm={5}></Col>
                                 <Col sm={2}>
@@ -97,11 +109,31 @@ const Shop = () => {
                                         aria-label="Search"
                                     />
                                     <br />
-                                    <Button style={{ width: "100%", textAlign: "left" }} variant="outline-secondary">All</Button>
+                                    <Button
+                                        style={{
+                                            width: "100%",
+                                            textAlign: "left",
+                                            border: "none",
+                                            "background-color": "teal",
+                                            "color": "white",
+                                            "cursor": "pointer"
+                                        }}>
+                                        All
+                                    </Button>
                                     <br />
                                     <br />
-                                    <Button style={{ width: "100%", textAlign: "left" }} variant="warning" onClick={(e) => setAddItem(true)}>Add new Item</Button>
-
+                                    <Button
+                                        style={{
+                                            width: "100%",
+                                            textAlign: "left",
+                                            border: "none",
+                                            "background-color": "teal",
+                                            "color": "white",
+                                            "cursor": "pointer"
+                                        }}
+                                        onClick={(e) => setAddItem(true)}>
+                                        Add Product!
+                                    </Button>
                                     <br />
                                     <hr />
                                     <span style={{ fontWeight: 'lighter' }}>{shop.sales} Sales (Total)</span>
@@ -111,23 +143,23 @@ const Shop = () => {
                                         <Row>
                                             {arr && arr.map(item => (
                                                 <Col sm={3}>
-                                    
-                                                            <Card.Body onClick={()=>onEditItem(item)}>
-                                                                <Card.Text>
-                                                                    <Card style={{ width: '13rem', height: '13rem' }}>
-                                                                        <Card.Img variant="top" width={70} height={100} src={item.img} />
-                                                                        <Card.Body>
-                                                                            <Card.Title><span style={{ fontWeight: 'bold' }}>{item.product_name}</span> | <span style={{ fontWeight: 'lighter', fontSize:15 }}>{item.sales} Sales</span></Card.Title>
-                                                                            <Card.Text>
-                                                                                $ {item.price} | {item.quantity > 0 ? (<span style={{ fontWeight: 'lighter' }}>{item.quantity} available</span>) : (<span style={{ fontWeight: 'lighter', color: 'red' }}>Out of Stock</span>)}
-                                                                     
-                                                                            </Card.Text>
-                                                                            {/* <Button variant="primary">Go somewhere</Button> */}
-                                                                        </Card.Body>
-                                                                    </Card>
-                                                                </Card.Text>
-                                                            </Card.Body>
-                                                
+
+                                                    <Card.Body onClick={() => onEditItem(item)}>
+                                                        <Card.Text>
+                                                            <Card style={{ width: '13rem', height: '13rem' }}>
+                                                                <Card.Img variant="top" width={70} height={100} src={item.img} />
+                                                                <Card.Body>
+                                                                    <Card.Title><span style={{ fontWeight: 'bold' }}>{item.product_name}</span> | <span style={{ fontWeight: 'lighter', fontSize: 15 }}>{item.sales} Sales</span></Card.Title>
+                                                                    <Card.Text>
+                                                                        $ {item.price} | {item.quantity > 0 ? (<span style={{ fontWeight: 'lighter' }}>{item.quantity} available</span>) : (<span style={{ fontWeight: 'lighter', color: 'red' }}>Out of Stock</span>)}
+
+                                                                    </Card.Text>
+                                                                    {/* <Button variant="primary">Go somewhere</Button> */}
+                                                                </Card.Body>
+                                                            </Card>
+                                                        </Card.Text>
+                                                    </Card.Body>
+
                                                 </Col>
                                             ))}
                                         </Row>
@@ -147,14 +179,14 @@ const Shop = () => {
                     <AddItem
                         addItem={addItem}
                         setAddItem={setAddItem}
-                        sellerId={shop.seller_id}
+                        shopId={shop.shop_id}
                         shop={shop}
                     />
 
-                    <EditItem 
+                    <EditItem
                         editItem={editItem}
                         setEditItem={setEditItem}
-                        item = {itemToEdit}
+                        item={itemToEdit}
                     />
                 </>
             )}

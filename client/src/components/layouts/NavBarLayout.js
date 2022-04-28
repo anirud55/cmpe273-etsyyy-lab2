@@ -56,17 +56,17 @@ const NavBarLayout = props => {
 
   if (search) {
     return <Navigate to={`/products/${searchParameter}`} />
-    
+
   }
 
   return (
     <Fragment>
-      <Navbar bg="dark" variant="dark" expand="lg">
+      <Navbar expand="lg">
         <Container fluid>
 
           <Col sm={1}></Col>
           <Col sm={1}>
-            <Navbar.Brand href="#"><Link to="/dashboard" style={{ textDecoration: 'none', color: 'white' }}><span style={{ fontSize: 28, fontWeight: 'bold' }}>Etsy</span></Link></Navbar.Brand>
+            <Navbar.Brand href="#"><Link to="/dashboard" style={{ textDecoration: 'none', color: 'black' }}><span style={{ fontSize: 28, fontWeight: 'bold' }}>ETSYYY</span></Link></Navbar.Brand>
           </Col>
 
           <Navbar.Toggle aria-controls="navbarScroll" />
@@ -83,7 +83,13 @@ const NavBarLayout = props => {
                   value={searchParameter}
                   onChange={(e) => setSearchParameter(e.target.value)}
                 />
-                <Button variant="outline-warning" className='rounded-pill' onClick={(e) => searchSubmit(e)}> <i class="fa fa-search" aria-hidden="true"></i></Button>
+                <Button className='rounded-pill'
+                  style={{
+                    border: "none",
+                    "background-color": "teal",
+                    "cursor": "pointer"
+                  }}
+                  onClick={(e) => searchSubmit(e)}> <i class="fa fa-search" aria-hidden="true"></i></Button>
               </Form>
             </Col>
 
@@ -140,11 +146,27 @@ const NavBarLayout = props => {
 
             </Nav>
             {!loggedIn && (
-              <Button variant="warning" onClick={() => setShowModal(true)}>Login</Button>
+              <Button
+                style={{
+                  border: "none",
+                  "background-color": "teal",
+                  "color": "white",
+                  "cursor": "pointer"
+                }}
+                onClick={() => setShowModal(true)}>SIGN IN</Button>
             )}
 
             {loggedIn && (
-              <Button variant="warning" onClick={(e) => logout(e)}>Logout</Button>
+              <Button
+                style={{
+                  border: "none",
+                  "background-color": "teal",
+                  "color": "white",
+                  "cursor": "pointer"
+                }}
+                onClick={(e) => logout(e)}>
+                Logout
+              </Button>
             )}
 
           </Navbar.Collapse>

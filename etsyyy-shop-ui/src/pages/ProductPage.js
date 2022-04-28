@@ -226,7 +226,7 @@ function ProductPage(props) {
               <Card.Body>
                 <Desc>
                   <Row>
-                    <Col>Seller:</Col>
+                    <Col>Shop:</Col>
                     <Col>
                       <Link to={`/shop/${product.shopname}`}>
                         <Card.Title>{product.shopname}</Card.Title>

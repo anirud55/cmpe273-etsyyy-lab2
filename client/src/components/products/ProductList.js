@@ -63,9 +63,9 @@ const ProductList = () => {
             data = data.products
             var products = []
             for (var i = 0; i < data.length; i++) {
-                const {category,description,id,img,name,price,quantity,sellerId} = data[i]._source
+                const { category, description, id, img, name, price, quantity, shopId } = data[i]._source
 
-                products.push({product_id:id,seller_id:sellerId,product_name:name,img,category,description,price,quantity})
+                products.push({ product_id: id, shop_id: shopId, product_name: name, img, category, description, price, quantity })
             }
             productGrid(products)
         } else {
@@ -189,10 +189,27 @@ const ProductList = () => {
         <Fragment>
             <Row style={{ margin: 30 }}>
                 <Col sm={2}>
-                    <Button style={{ width: "100%" }} className='rounded-pill' onClick={() => setShowApplyFilter(true)} variant='outline-secondary'>All filters</Button>
+                    <Button
+                        style={{
+                            width: "100%",
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={() => setShowApplyFilter(true)}>
+                        All filters
+                    </Button>
                 </Col>
                 <Col sm={5}>
-                    {filters && filters.category.length > 0 ? (<Button className='rounded-pill' variant='outline-secondary'>{filters.category}</Button>) : ""}
+                    {filters && filters.category.length > 0 ? (<Button
+                        style={{
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                    >{filters.category}</Button>) : ""}
                     {filters && filters.price < 9999999 && filters.price.length > 0 ? (<Button className='rounded-pill' variant='outline-secondary'>Price Under {filters.price}</Button>) : ""}
                 </Col>
                 <Col sm={3}>

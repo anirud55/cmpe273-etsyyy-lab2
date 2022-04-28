@@ -8,14 +8,14 @@ import constants from './../../utils/constants.json'
 const NameYourShop = () => {
     const [name, setName] = useState("")
     const [nameAvailable, setNameAvailable] = useState(false)
-    const [show,setShow] = useState(false)
+    const [show, setShow] = useState(false)
 
-    const [registered,setRegistered] = useState(false)
+    const [registered, setRegistered] = useState(false)
 
     const checkAvailability = async (e) => {
         e.preventDefault()
         setShow(true)
-        const res = await axios.post(constants.uri+"/shop/check-availablity", { name })
+        const res = await axios.post(constants.uri + "/shop/check-availablity", { name })
         if (res.status === 200) {
             setNameAvailable(true)
         } else if (res.status === 201) {
@@ -28,8 +28,8 @@ const NameYourShop = () => {
     const createNewShop = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post(constants.uri+"/shop/add",{name})
-            if(res.data){
+            const res = await axios.post(constants.uri + "/shop/add", { name })
+            if (res.data) {
                 toast.success("Registered your new shop")
                 setRegistered(true)
             }
@@ -38,8 +38,8 @@ const NameYourShop = () => {
         }
     }
 
-    if(registered){
-        return <Navigate to={`/shop/${name}/home`}/>
+    if (registered) {
+        return <Navigate to={`/shop/${name}/home`} />
     }
     return (
         <Fragment>
@@ -68,7 +68,16 @@ const NameYourShop = () => {
             {nameAvailable && name && show && (
                 <div style={{ marginLeft: "15%", marginRight: "15%", textAlign: 'center' }}>
                     <h3><Badge bg="success"><i class="fa fa-check" aria-hidden="true"></i>{' '}Available</Badge></h3><br />
-                    <Button variant="outline-warning" className='rounded-pill' onClick={(e)=>createNewShop(e)}>Register your new Shop</Button>
+                    <Button
+                        style={{
+                            border: "none",
+                            "background-color": "teal",
+                            "color": "white",
+                            "cursor": "pointer"
+                        }}
+                        onClick={(e) => createNewShop(e)}>
+                        Create Shop!
+                    </Button>
                     {/* <Link to={`/shop/${name}/home`}><span style={{ textDecoration: 'underline', cursor: 'pointer' }}>Create your new Shop ?</span></Link> */}
                 </div>
             )}
