@@ -111,21 +111,20 @@ const Dashboard = () => {
                     <Row>
                         <Col sm={1}></Col>
                         <Col sm={2}>
+                            <Link to="/products/Art" style={{ textDecoration: 'none', color: 'black' }}>
+                                <Row>
+                                    <Image roundedCircle width={5} height={120} src={art} />
+                                </Row>
+                                <Row><h6 style={{ textAlign: 'center' }}>Art</h6></Row>
+                            </Link>
+                        </Col>
+                        <Col sm={2}>
                             <Link to="/products/Clothing" style={{ textDecoration: 'none', color: 'black' }}>
                                 <Row>
                                     <Image roundedCircle width={5} height={120} src={clothing} />
                                 </Row>
                                 <Row><h6 style={{ textAlign: 'center' }}>Clothing</h6></Row>
                             </Link>
-                        </Col>
-                        <Col sm={2}>
-                            <Link to="/products/Jewelry" style={{ textDecoration: 'none', color: 'black' }}>
-                                <Row>
-                                    <Image roundedCircle width={5} height={120} src={jewelry} />
-                                </Row>
-                                <Row><h6 style={{ textAlign: 'center' }}>Jewelry</h6></Row>
-                            </Link>
-
                         </Col>
                         <Col sm={2}>
                             <Link to="/products/Entertainment" style={{ textDecoration: 'none', color: 'black' }}>
@@ -144,12 +143,13 @@ const Dashboard = () => {
                             </Link>
                         </Col>
                         <Col sm={2}>
-                            <Link to="/products/Art" style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to="/products/Jewelry" style={{ textDecoration: 'none', color: 'black' }}>
                                 <Row>
-                                    <Image roundedCircle width={5} height={120} src={art} />
+                                    <Image roundedCircle width={5} height={120} src={jewelry} />
                                 </Row>
-                                <Row><h6 style={{ textAlign: 'center' }}>Art</h6></Row>
+                                <Row><h6 style={{ textAlign: 'center' }}>Jewelry</h6></Row>
                             </Link>
+
                         </Col>
                         <Col sm={1}></Col>
                     </Row>
