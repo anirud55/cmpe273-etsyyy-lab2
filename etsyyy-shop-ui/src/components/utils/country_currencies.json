@@ -1,0 +1,34 @@
+[
+    {
+        "country": "France",
+        "currency_code": "EUR (€)"
+    },
+    {
+        "country": "India",
+        "currency_code": "INR (₹)"
+    },
+    {
+        "country": "Japan",
+        "currency_code": "JPY (¥)"
+    },
+    {
+        "country": "Singapore",
+        "currency_code": "SGD ($)"
+    },
+    {
+        "country": "Switzerland",
+        "currency_code": "CHF"
+    },
+    {
+        "country": "United Arab Emirates",
+        "currency_code": "AED"
+    },
+    {
+        "country": "United Kingdom",
+        "currency_code": "GBP (£)"
+    },
+    {
+        "country": "United States",
+        "currency_code": "USD ($)"
+    }
+]
