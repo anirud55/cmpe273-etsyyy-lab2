@@ -7,11 +7,11 @@ var opts = {}
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET_KEY;
 
-const users = require('../model/users')
+const UserModel = require('./../model/users')
 
 passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
     
-    users.findOne({id:jwt_payload.user.id}, function(err, user) {
+    UserModel.findOne({id:jwt_payload.user.id}, function(err, user) {
         if (err) {
             return done(err, false);
         }

@@ -1,117 +1,190 @@
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import { LinkContainer } from "react-router-bootstrap";
-import Badge from "react-bootstrap/Badge";
-import Nav from "react-bootstrap/Nav";
-import { Component, useContext, useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-import { ShoppingCartOutlined } from '@material-ui/icons';
-import { FavoriteBorderOutlined , AccountBoxOutlined } from '@mui/icons-material';
-import cookie from "react-cookies";
-import { Navigate, withRouter } from "react-router";
-import SearchBox from "./Searchbox";
-import LoginModal from "./LoginModal";
-import Button from "react-bootstrap/Button";
-import { useDispatch, useSelector } from "react-redux";
-import { logout, signin, signout } from "../actions/userActions";
-import { connect } from "react-redux";
-import axios from "axios";
-import { setproductaction } from "../actions/productactions";
-import { BACKEND } from "../constants/userConstants";
+import React, { Fragment, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import { Navbar, Nav, NavDropdown, Container, InputGroup, FormControl, Form, Button, Col, Row, Tooltip, OverlayTrigger, Badge } from 'react-bootstrap'
+import Signup from './../pages/SignUpPage'
+import axios from 'axios'
+import { Link, Navigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import constants from './../../src/constants/userConstants.json'
 
-function EtsyNavbar(props) {
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
-  const userInfo = useSelector((state) => state.userInfo);
-  const dispatch = useDispatch();
+const NavBarLayout = props => {
+  const [showModal, setShowModal] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [cartItems, setCartItems] = useState()
+  const [searchParameter, setSearchParameter] = useState()
+  const [search, setSearch] = useState(false)
 
-  //handle logout to destroy the cookie
-  const handleLogout = (e) => {
-    console.log("Inside logout");
-    dispatch(logout());
-    axios.get(BACKEND + "/api/products").then((response) => {
-      dispatch(setproductaction(response.data));
-    });
-    cookie.remove("cookie", { path: "/" });
-  };
+
+  toast.configure()
+
+  useEffect(async () => {
+    const user = await axios.post(constants.uri + "/users/auth")
+    if (user.data) {
+      //LoggedIN
+      setLoggedIn(true)
+      const { data } = await axios.post(constants.uri + "/order/cart-items", { userId: user.data.id })
+      if (data) {
+        setCartItems(data.length)
+        window.localStorage.setItem('cart', data.length)
+      }
+    } else {
+      setLoggedIn(false)
+    }
+  }, [])
+
+  useEffect(async () => {
+    const user = await axios.post(constants.uri + "/users/auth")
+    const { data } = await axios.post(constants.uri + "/order/cart-items", { userId: user.data.id })
+    if (data) {
+      setCartItems(data.length)
+    }
+  }, [window.localStorage.getItem('cart')])
+
+  const logout = (e) => {
+    e.preventDefault()
+    window.localStorage.setItem("userdetails", "")
+    setLoggedIn(false)
+    window.location.reload(false)
+    toast.success("Logged Out")
+  }
+
+  const searchSubmit = (e) => {
+    e.preventDefault()
+    console.log(searchParameter)
+    setSearch(true)
+  }
+
+  if (search) {
+    return <Navigate to={`/products/${searchParameter}`} />
+
+  }
 
   return (
-    <div className="EtsyNavbar">
-      <Navbar bg="white" variant="white">
-        <Container>
-          <LinkContainer to="/">
-            <Navbar.Brand className="logo">ETSYYY</Navbar.Brand>
-          </LinkContainer>
-          <SearchBox />
-          <Nav className="me-auto justify-content-center">
-            {isLoggedIn ? (
-              <Link to="/favorites" className="nav-link" style={{color: "black"}}>
-                <FavoriteBorderOutlined />
-              </Link>
-            ) : (
-              <Link to="/"></Link>
+    <Fragment>
+      <Navbar expand="lg">
+        <Container fluid>
+
+          <Col sm={1}></Col>
+          <Col sm={1}>
+            <Navbar.Brand href="#"><Link to="/dashboard" style={{ textDecoration: 'none', color: 'black' }}><span style={{ fontSize: 28, fontWeight: 'bold' }}>ETSYYY</span></Link></Navbar.Brand>
+          </Col>
+
+          <Navbar.Toggle aria-controls="navbarScroll" />
+          <Navbar.Collapse id="navbarScroll">
+
+            <Col sm={6}>
+              <Form className="d-flex" style={{ width: "100%" }}>
+                <FormControl
+                  type="search"
+                  placeholder="Search for anything"
+                  className="me-1 rounded-pill"
+                  aria-label="Search"
+                  name="searchParameter"
+                  value={searchParameter}
+                  onChange={(e) => setSearchParameter(e.target.value)}
+                />
+                <Button className='rounded-pill'
+                  style={{
+                    border: "none",
+                    "background-color": "teal",
+                    "cursor": "pointer"
+                  }}
+                  onClick={(e) => searchSubmit(e)}> <i class="fa fa-search" aria-hidden="true"></i></Button>
+              </Form>
+            </Col>
+
+            <Col sm={2}></Col>
+
+
+            <Nav
+              className="me-auto my-2 my-lg-0"
+              style={{ maxHeight: '100px' }}
+              navbarScroll
+            >
+
+              {loggedIn && (
+                <>
+                  <Nav.Link><Link to="/profile" >
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="button-tooltip-2">Favorites</Tooltip>}>
+                      <i class="fa fa-heart-o" style={{ color: 'red' }} aria-hidden="true"></i>
+                    </OverlayTrigger>
+                  </Link></Nav.Link>
+
+                  <Nav.Link></Nav.Link>
+
+
+                  <Nav.Link>
+                    <Link to="/shop">
+                      <OverlayTrigger placement="bottom" overlay={<Tooltip id="button-tooltip-2">Sell on ETSYYY</Tooltip>}>
+                        <i class="fa fa-shopping-bag" style={{ color: 'black' }} aria-hidden="true"></i>
+                      </OverlayTrigger>
+                    </Link>
+                  </Nav.Link>
+
+                  <Nav.Link></Nav.Link>
+
+                  <NavDropdown title={(<i class="fa fa-user-circle" aria-hidden="true" style={{ color: 'black' }} ></i>)} id="basic-nav-dropdown" >
+                    <NavDropdown.Item ><Link to="/profile" style={{ textDecoration: 'none', color: 'black' }}><span>Profile</span></Link></NavDropdown.Item>
+                    <NavDropdown.Item ><Link to="/myOrders" style={{ textDecoration: 'none', color: 'black' }}><span>Purchases</span></Link></NavDropdown.Item>
+                    <NavDropdown.Item ><Link to="/shop/myShops" style={{ textDecoration: 'none', color: 'black' }}><span>Shops</span></Link></NavDropdown.Item>
+                  </NavDropdown>
+
+                  <Nav.Link></Nav.Link>
+
+                  <Nav.Link>
+                    <Link to="/cart" style={{ textDecoration: 'none', color: 'black' }}>
+                      <i class="fa fa-shopping-cart" aria-hidden="true"></i><Badge style={{
+                        fontSize: 12,
+                        backgroundColor: '#ff0000', color: '#fff', paddingTop: 2, paddingBottom: 2, paddingLeft: 5, paddingRight: 5, verticalAlign: 'top', marginLeft: '-5px'
+                      }} pill bg="success">{cartItems}</Badge>
+
+                    </Link>
+
+                  </Nav.Link>
+                </>
+              )}
+
+            </Nav>
+            {!loggedIn && (
+              <Button
+                style={{
+                  border: "none",
+                  "background-color": "teal",
+                  "color": "white",
+                  "cursor": "pointer"
+                }}
+                onClick={() => setShowModal(true)}>SIGN IN</Button>
             )}
-          </Nav>
-          <Nav className="me-auto">
-            {!isLoggedIn ? (
-              <Link to="/"></Link>
-            ) : userInfo[0].shopname === null ? (
-              <Link to="/createshop" className="nav-link" style={{color: "black"}}>
-                Sell
-              </Link>
-            ) : (
-              <Link
-                to={"/shop/" + userInfo[0].shopname}
-                className="nav-link"
-                style={{color: "black"}}
-              >
-                Sell
-              </Link>
+
+            {loggedIn && (
+              <Button
+                style={{
+                  border: "none",
+                  "background-color": "teal",
+                  "color": "white",
+                  "cursor": "pointer"
+                }}
+                onClick={(e) => logout(e)}>
+                Logout
+              </Button>
             )}
-          </Nav>
-          <Nav className="me-auto">
-            {isLoggedIn ? (
-              <Link to="/myorders" className="nav-link"  style={{color: "black"}}>
-                My Orders
-              </Link>
-            ) : (
-              <Link to="/"></Link>
-            )}
-          </Nav>
-          <Nav className="me-auto">
-            {isLoggedIn ? (
-              <Link to="/profile" className="nav-link"  style={{color: "black"}}>
-                {/* Profile */}
-                <AccountBoxOutlined />
-              </Link>
-            ) : (
-              <Link to="/"></Link>
-            )}
-          </Nav>
-          {isLoggedIn ? (
-            <ul class="nav navbar-nav navbar-right">
-              <li>
-                <Link to="/" onClick={handleLogout} className="nav-link"  style={{color: "black"}}>
-                  Logout
-                </Link>
-              </li>
-            </ul>
-          ) : (
-            <ul class="nav navbar-nav navbar-right">
-              <li>
-                <LoginModal buttonName={"SIGN IN"} redirectTo={"/"}  style={{color: "black"}}></LoginModal>
-              </li>
-            </ul>
-          )}
-          <Nav className="me-auto">
-            <Link to="/cart" className="nav-link" style={{color: "black"}}>
-              {/* Cart */}
-              <ShoppingCartOutlined />
-            </Link>
-          </Nav>
+
+          </Navbar.Collapse>
         </Container>
       </Navbar>
-    </div>
-  );
+      {
+        showModal && (
+          <Signup
+            showModal={showModal}
+            setShowModal={setShowModal}
+          />
+        )
+      }
+    </Fragment >
+
+  )
 }
 
-export default EtsyNavbar;
+NavBarLayout.propTypes = {}
+
+export default NavBarLayout

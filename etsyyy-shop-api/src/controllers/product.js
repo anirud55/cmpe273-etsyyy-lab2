@@ -1,11 +1,11 @@
-const ec = require('../../config/elasticClient')
+const elasticClient = require('./../../config/elasticClient')
 
-const kafka = require('../../kafka/client')
-const actions = require('../../action/actions.json')
+const kafka = require('./../../kafka/client')
+const actions = require('./../../actions/actions.json')
 
 exports.create = async (req,res)=>{
-    const {shopId,name,category,description,price,quantity,img} = req.body
-    kafka.sendKafkaRequest('products',{ shopId,name,category,description,price,quantity,img, action:actions.CREATE_PRODUCT},(err,data) =>{
+    const {sellerId,name,category,description,price,quantity,img} = req.body
+    kafka.sendKafkaRequest('products',{ sellerId,name,category,description,price,quantity,img, action:actions.CREATE_PRODUCT},(err,data) =>{
         if(err) return res.status(400).json({message:err})
         return res.json(data)
     })
@@ -20,19 +20,19 @@ exports.getProduct = (req,res) => {
         if(err) return res.status(400).json({message:err})
         return res.json(data)
     })
-}    
+}   
 
 exports.editProduct = async (req,res) => {
-    const {elasticId,productId,name,category,description,price,quantity,img} = req.body
-    kafka.sendKafkaRequest('products',{ elasticId,productId,name,category,description,price,quantity,img, action:actions.EDIT_PRODUCT},(err,data) =>{
+    const {productId,name,category,description,price,quantity,img} = req.body
+    kafka.sendKafkaRequest('products',{ productId,name,category,description,price,quantity,img, action:actions.EDIT_PRODUCT},(err,data) =>{
         if(err) return res.status(400).json({message:err})
         return res.json(data)
     })
 }
 
 exports.getItems = async (req,res) => {
-    const {shopId} = req.body
-    kafka.sendKafkaRequest('products',{ shopId, action:actions.GET_ITEMS},(err,data) =>{
+    const {sellerId} = req.body
+    kafka.sendKafkaRequest('products',{ sellerId, action:actions.GET_ITEMS},(err,data) =>{
         if(err) return res.status(400).json({message:err})
         return res.json(data)
     })

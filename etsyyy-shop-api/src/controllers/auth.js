@@ -1,6 +1,6 @@
-const kafka = require('../../kafka/client');
+const kafka = require('./../../kafka/client')
 
-const actions = require('../../action/actions.json')
+const actions = require('./../../actions/actions.json')
 
 exports.login = async (req, res) => {
     const { email, password } = req.body

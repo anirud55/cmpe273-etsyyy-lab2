@@ -1,22 +1,22 @@
-const conn = require('./connection')
-const actions = require('../action/actions.json')
+const kafkaConection = require('./connection')
+const actions = require('./../actions/actions.json')
 
-const user = require('../services/users')
+const UserService = require('./../services/users')
 
-conn.getConsumer('favorites',(consumer) => {
+kafkaConection.getConsumer('favorites',(consumer) => {
     
-    var producer = conn.getProducer()
+    var producer = kafkaConection.getProducer()
 
     consumer.on('message', function(message){
         var data = JSON.parse(message.value)
         const {payload,correlationId} = data 
         const { action } = payload
         
-        console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Backend data consumption+=+=+=+=+=")
+        console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Backend data consumption+=+=+=+=+=\n",action)
 
         if(action == actions.ADD_TO_FAVORITES){
             
-            user.addToFavorites(payload,(err,res) => {
+            UserService.addToFavorites(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -41,14 +41,14 @@ conn.getConsumer('favorites',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.REMOVE_FROM_FAVORITES){
             
-            user.removeFromFavorites(payload,(err,res) => {
+            UserService.removeFromFavorites(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -73,14 +73,14 @@ conn.getConsumer('favorites',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.MY_FAVORITES){
             
-            user.myFavorites(payload,(err,res) => {
+            UserService.myFavorites(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -105,7 +105,7 @@ conn.getConsumer('favorites',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }

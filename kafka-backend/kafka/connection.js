@@ -8,10 +8,10 @@ exports.getProducer = () => {
     return new HighlevelProducer(client)
 }
 
-exports.getConsumer = (topic_name,results) => {
+exports.getConsumer = (topicName,results) => {
 
     var lOffset;
-    latestoffset.getlatestOffset(topic_name, function (returnValue) {
+    latestoffset.getlatestOffset(topicName, function (returnValue) {
         lOffset = returnValue
 
         var client = new kafka.KafkaClient("localhost:2181")
@@ -23,7 +23,7 @@ exports.getConsumer = (topic_name,results) => {
         };
 
         var kafkaConsumer = new Consumer(client, [
-            { topic: topic_name, offset: lOffset, partition: 0 },
+            { topic: topicName, offset: lOffset, partition: 0 },
         ], options,
             {
                 autoCommit: false 

@@ -1,16 +1,16 @@
 const uuid = require('uuid').v4
-const prodmod = require('../models/products.model')
-const cartmod = require('../models/carts.model')
+const ProductModel = require('./../models/products.model')
+const CartModel = require('./../models/carts.model')
 
-exports.addToCart = async (msg_payload,callback) => {
-    const { productId, userId, quantity, price } = msg_payload
+exports.addToCart = async (payload,cb) => {
+    const { productId, userId, quantity, price } = payload
 
     try {
-        const product = await prodmod.findOne({product_id:productId}).exec()
+        const product = await ProductModel.findOne({product_id:productId}).exec()
         if(product){
-            const cart = await new cartmod({
+            const cart = await new CartModel({
                 id:uuid(),
-                shop_id:product.shop_id,
+                seller_id:product.seller_id,
                 product_id:productId,
                 user_id:userId,
                 product_name:product.name,
@@ -21,39 +21,39 @@ exports.addToCart = async (msg_payload,callback) => {
                 quantity:quantity
             })
             await cart.save((err,data) => {
-                if(err) return callback(err,null)
-                return callback(null,data)
+                if(err) return cb(err,null)
+                return cb(null,data)
             })
         }
 
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.getCartItems = async (msg_payload,callback) => {
-    const { userId } = msg_payload
+exports.getCartItems = async (payload,cb) => {
+    const { userId } = payload
     try {
-        const items = await cartmod.find({user_id:userId}).exec()
+        const items = await CartModel.find({user_id:userId}).exec()
 
         if(items){
-            return callback(null,items)
+            return cb(null,items)
         }
-        return callback(null,[])
+        return cb(null,[])
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.removeCartItem = async (msg_payload,callback) => {
-    const { userId, productId } = msg_payload
+exports.removeCartItem = async (payload,cb) => {
+    const { userId, productId } = payload
     try {
-        const data = await cartmod.deleteOne({user_id:userId,product_id:productId})
+        const data = await CartModel.deleteOne({user_id:userId,product_id:productId})
         if(data){
-            return callback(null,data)
+            return cb(null,data)
         }
-        return callback("Failed to delte from cart",null)
+        return cb("Failed to delte from cart",null)
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }

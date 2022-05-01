@@ -1,20 +1,20 @@
 const uuid = require('uuid').v4
-const usersmod = require('../models/users.model')
-const favomod = require('../models/favorites.model')
-const prodmod = require('../models/products.model')
+const UserModel = require('./../models/users.model')
+const FavoritesModel = require('./../models/favorites.model')
+const ProductModel = require('./../models/products.model')
 const bcrypt = require('bcrypt')
 
-exports.createUser = async (msg_payload, callback) => {
-    const { firstName, email, password } = msg_payload
+exports.createUser = async (payload, cb) => {
+    const { firstName, email, password } = payload
     try {
-        const User = await usersmod.findOne({email}).exec()
+        const User = await UserModel.findOne({email}).exec()
         if(User){
-            return callback("ALready registered",null)
+            return cb("ALready registered",null)
         }
         const salt = await bcrypt.genSalt(10)
         const encrypted = await bcrypt.hash(password, salt)
         
-        const user = new usersmod({
+        const user = new UserModel({
             id:uuid(),
             first_name : firstName,
             email: email,
@@ -23,18 +23,18 @@ exports.createUser = async (msg_payload, callback) => {
 
         user.save((err,data) =>{
             console.log(err)
-            if(err) return callback(err,null)
-            return callback(null,data)
+            if(err) return cb(err,null)
+            return cb(null,data)
         })
 
     } catch (error) {
         console.log(error)
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.updateUser = async (msg_payload,callback) => {
-    console.log("------msg_payload-", msg_payload)
+exports.updateUser = async (payload,cb) => {
+    console.log("------payload-", payload)
     const {
         id,
         firstName,
@@ -48,10 +48,10 @@ exports.updateUser = async (msg_payload,callback) => {
         country,
         about,
         profileImg
-    } = msg_payload
+    } = payload
 
     try {
-        const user = await usersmod.findOne({id}).exec()
+        const user = await UserModel.findOne({id}).exec()
         console.log("before updating",user)
         if(user){
             const id = user._id
@@ -68,26 +68,26 @@ exports.updateUser = async (msg_payload,callback) => {
                 about:about,
                 profile_img:profileImg
             }, (err,data) => {
-                if(err) return callback(err,null)
-                return callback(null,data)
+                if(err) return cb(err,null)
+                return cb(null,data)
             })
         }    
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.addToFavorites = async (msg_payload,callback) => {
-    const { id, productId } = msg_payload
+exports.addToFavorites = async (payload,cb) => {
+    const { id, productId } = payload
     try {
-        const favorite = await favomod.findOne({id:id,product_id:productId})
+        const favorite = await FavoritesModel.findOne({id:id,product_id:productId})
         if(favorite==null){
-            const product = await prodmod.findOne({product_id:productId}).exec()
+            const product = await ProductModel.findOne({product_id:productId}).exec()
             if(product){
-                const newFavorite = await new favomod({
+                const newFavorite = await new FavoritesModel({
                     id,
                     product_id:productId,
-                    shopId: product.shop_id,
+                    sellerId: product.seller_id,
                     productName: product.product_name,
                     category: product.category,
                     description: product.description,
@@ -97,43 +97,43 @@ exports.addToFavorites = async (msg_payload,callback) => {
                 })
                 await newFavorite.save((err,data)=>{
                     console.log("3",err)
-                    if(err) return callback(err,null)
-                    return callback(null,data)
+                    if(err) return cb(err,null)
+                    return cb(null,data)
                 })
             }else{
-                return callback("Invalid Product",null)
+                return cb("Invalid Product",null)
             }
         }else{
-            return callback("Already added to favorites",null)
+            return cb("Already added to favorites",null)
         }
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.removeFromFavorites = async (msg_payload,callback) => {
-    const { id, productId } = msg_payload
+exports.removeFromFavorites = async (payload,cb) => {
+    const { id, productId } = payload
 
     try {
-        const data = await favomod.deleteOne({id:id,product_id:productId}).exec()
+        const data = await FavoritesModel.deleteOne({id:id,product_id:productId}).exec()
         if(data){
-            return callback(null,data)
+            return cb(null,data)
         }
-        return callback("Does not exist",null)
+        return cb("Does not exist",null)
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.myFavorites = async (msg_payload,callback) => {
-    const {id} = msg_payload
+exports.myFavorites = async (payload,cb) => {
+    const {id} = payload
     try {
-        const favs = await favomod.find({id}).exec()
+        const favs = await FavoritesModel.find({id}).exec()
         if(favs){
-            return callback(null,favs)
+            return cb(null,favs)
         }
-        return callback("No Favorites",null)
+        return cb("No Favorites",null)
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }

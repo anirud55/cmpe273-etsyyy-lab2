@@ -1,6 +1,7 @@
 const conn = require('./connection')
 const uuid = require('uuid').v4
 
+
 module.exports = class KafkaRequestResponse {
 
     requests = {}
@@ -8,7 +9,7 @@ module.exports = class KafkaRequestResponse {
 
     consumer = conn.getConsumer('acknowledge')
 
-    kafkaRequest(topic_name,msg_payload,results){
+    kafkaRequest(topicName,payload,results){
         var producer = conn.getProducer()
 
         const correlationId = uuid()
@@ -18,13 +19,13 @@ module.exports = class KafkaRequestResponse {
 
         this.requests[correlationId] = entry
 
-        console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=CorrelationId and requests entry+=+=+=+=+=")
+        console.log("+=+=+=+=+=+=+=+=+=+=CorrelationId and requests entry+=+=+=+=+=")
         this.kafkaResponse(function(){
             producer.on('ready',function() {
                 let payloads = [
-                    {topic: topic_name,messages: JSON.stringify({msg_payload,correlationId}),partition:0}
+                    {topic: topicName,messages: JSON.stringify({payload,correlationId}),partition:0}
                 ]
-                console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Producer sending data+=+=+=+=+=",payloads)
+                console.log("+=+=+=+=+=+=+=+=+=+=Data from Producer+=+=+=+=+=",payloads)
                 producer.send(payloads,function(err,data){
                     console.log("ERR ",err)
                     console.log("DATA ",data)
@@ -40,7 +41,7 @@ module.exports = class KafkaRequestResponse {
             console.log("Acknowledgement recieved :",message)
 
             var acknowledgementData = JSON.parse(message.value)
-            var correlationId = acknowledgementData.msg_payload.correlationId
+            var correlationId = acknowledgementData.payload.correlationId
 
             console.log("CorreleationID: ",correlationId)
             console.log("request:", requestsWaiting)
@@ -50,16 +51,16 @@ module.exports = class KafkaRequestResponse {
 
                 delete requestsWaiting[correlationId]
 
-                if(acknowledgementData.msg_payload.status === 200){
-                    console.log("200",acknowledgementData.msg_payload.content)
-                    return entry.results(null, acknowledgementData.msg_payload.content)
+                if(acknowledgementData.payload.status === 200){
+                    console.log("200",acknowledgementData.payload.content)
+                    return entry.results(null, acknowledgementData.payload.content)
                 }
 
-                if(acknowledgementData.msg_payload.status === 400){
-                    return entry.results(acknowledgementData.msg_payload.content, null)   
+                if(acknowledgementData.payload.status === 400){
+                    return entry.results(acknowledgementData.payload.content, null)   
                 }
 
-                entry.results('Server Error', null)   
+                return entry.results('Server Error', null)   
             }
         });
         this.requests = requestsWaiting

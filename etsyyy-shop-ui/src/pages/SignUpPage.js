@@ -1,161 +1,174 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Navigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { cleearerrormessage, signup } from "../actions/userActions";
-import cookie from "react-cookies";
-import { BACKEND } from "../constants/userConstants";
+import React, { Fragment, useState } from 'react'
+import PropTypes from 'prop-types'
+import { Modal, Button, Form, Col, Row } from 'react-bootstrap'
+import axios from 'axios'
+import { ToastContainer, toast } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
+import { Navigate } from 'react-router-dom'
+import constants from './../../src/constants/userConstants.json'
 
-const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
-    ),
-    url("https://images.pexels.com/photos/3056059/pexels-photo-3056059.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260")
-      center;
-  background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const Signup = ({ showModal, setShowModal }) => {
+    const [signin, setSignin] = useState(true)
+    const [register, setRegister] = useState(false)
+    const [loggedIn,setLoggedIn] = useState(false)
 
-const Wrapper = styled.div`
-  width: 40%;
-  padding: 20px;
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
-    );
-  align-items: center;
-  justify-content: center;
-`;
 
-const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 300;
-`;
+    const handleRegister = (e) => {
+        e.preventDefault()
+        setRegister(true)
+        setSignin(false)
+    }
 
-const Form = styled.form`
-  display: flex;
-  flex-wrap: wrap;
-`;
+    const [registerForm, setRegisterForm] = useState({
+        email: "",
+        firstName: "",
+        password: ""
+    })
 
-const Input = styled.input`
-  flex: 1;
-  min-width: 40%;
-  margin: 20px 10px 0px 0px;
-  padding: 10px;
-`;
+    const [loginForm,setLoginForm] = useState({
+        loginEmail:"",
+        loginPassword:""
+    })
 
-const Agreement = styled.span`
-  font-size: 12px;
-  margin: 20px 0px;
-`;
+    const { email, firstName, password } = registerForm
 
-const Button1 = styled.button`
-  width: 40%;
-  border: none;
-  padding: 15px 20px;
-  background-color: teal;
-  color: white;
-  cursor: pointer;
-`;
+    const {loginEmail,loginPassword} = loginForm
 
-//Define a Signup Page Component
-export default function SignUpPage(props) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const error = useSelector((state) => state.error);
-  const isLoggedIn = useSelector((state) => state.isLoggedIn);
-  const dispatch = useDispatch();
+    const onChangeData = e => {
+        e.preventDefault()
+        setRegisterForm({ ...registerForm, [e.target.name]: e.target.value })
+    }
 
-  //name change handler to update state variable with the text entered by the user
-  const nameChangeHandler = (e) => {
-    setName(e.target.value);
-    dispatch(cleearerrormessage());
-  };
-  //email change handler to update state variable with the text entered by the user
-  const emailChangeHandler = (e) => {
-    setEmail(e.target.value);
-    dispatch(cleearerrormessage());
-  };
-  //password change handler to update state variable with the text entered by the user
-  const passwordChangeHandler = (e) => {
-    setPassword(e.target.value);
-    dispatch(cleearerrormessage());
-  };
+    const onChangeLoginData = e => {
+        e.preventDefault()
+        setLoginForm({...loginForm,[e.target.name]:e.target.value})
+        console.log(loginForm)
+    }
 
-  //submit Login handler to send a request to the node backend
-  const submitSignUp = async (e) => {
-    dispatch(signup(name, email, password));
-  };
+    const onSubmitRegister = async e => {
+        e.preventDefault()
+        console.log(registerForm)
+        try {
+            const res = await axios.post(constants.uri+"/users/register", registerForm)
+            if (res.status === 200) {
+                window.localStorage.setItem("userdetails",res.data.token)
+                setShowModal(false)
+                toast.success("Registered",{
+                    position: "top-center",
+                })
+                setLoggedIn(true)
+            }
+        } catch (error) {
+            setShowModal(false)
+            toast("Sorry, Try again",{position:"top-center"})
+        }
+    }
 
-  return isLoggedIn ? (
-    <Navigate to="/home" />
-  ) : (
-    <div>
-      <Container>
-      <Wrapper>
-        {/* <div class="login-form"> */}
-          <div class="main-div">
-            <div class="panel">
-            <Title>CREATE AN ACCOUNT</Title>
-            </div>
-            <div class="form-group" style={{ width: "40%" }}>
-              <input
-                onChange={nameChangeHandler}
-                type="text"
-                required="true"
-                class="form-control"
-                name="name"
-                placeholder="Full Name"
-              />
-            </div>
-            <br></br>
-            <div class="form-group" style={{ width: "40%" }}>
-              <input
-                onChange={emailChangeHandler}
-                type="email"
-                required="true"
-                class="form-control"
-                name="email"
-                placeholder="Email Address"
-              />
-            </div>
-            <br></br>
-            <div class="form-group" style={{ width: "40%" }}>
-              <input
-                onChange={passwordChangeHandler}
-                type="password"
-                required="true"
-                class="form-control"
-                name="password"
-                placeholder="Password"
-              />
-            </div>
-            <br></br>
-            <div>
-              <button onClick={submitSignUp} class="btn btn-primary" style={{
-                        width: "40%", border: "none",
-                        "padding": "15px 20px", "background-color": "teal",
-                        "color": "white",
-                        "cursor": "pointer",
-                        "margin-bottom": "10px"
-                      }}>
-                Create Account
-              </button>
-            </div>
-            <br></br>
-            <div class={error ? "visible" : "invisible"}>
-              <div>{error}</div>
-            </div>
-          </div>
-        {/* </div> */}
-        </Wrapper>
-        </Container>
-    </div>
-  );
+    const onSubmitLogin = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post(constants.uri+"/users/login",{email:loginForm.loginEmail,password:loginForm.loginPassword})
+            if(res.status === 200 ){
+                window.localStorage.setItem("userdetails",res.data.token)
+                setShowModal(false)
+                toast.success("Loggedin", {
+                    position: "top-center",
+                })
+                setLoggedIn(true)
+                window.location.reload(false)
+            }
+        } catch (error) {
+            setShowModal(false)
+            toast("Sorry, Try again",{position:"top-center"})
+        }
+    }
+
+    toast.configure()
+
+    if(loggedIn){
+        return <Navigate to="/dashboard"/>
+    }
+
+    return (
+        <Fragment>
+            <Modal
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        <Row>
+                            <Col sm={8}>
+                                Sign in
+                            </Col>
+                            <Col sm={4}>
+                                <Button variant="outline-warning" onClick={(e => { handleRegister(e) })} className='float-right rounded-pill '>Register</Button>
+                            </Col>
+                        </Row>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {signin && !register && (
+                        <Form>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control type="email" name="loginEmail"  value={loginEmail} onChange={(e)=>onChangeLoginData(e)} placeholder="Enter email" />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" name="loginPassword" value={loginPassword} onChange={(e)=>onChangeLoginData(e)} placeholder="Password" />
+                            </Form.Group>
+                            <Row>
+                                <Col>
+                                    <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                                        <Form.Check type="checkbox" label="Keep me Signed In" />
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <span>Forgort Password?</span>
+                                </Col>
+                            </Row>
+
+                            <Button style={{ width: "100%" }} variant="warning" onClick={(e)=>onSubmitLogin(e)} className="rounded-pill" type="submit">
+                                Sign in
+                            </Button>
+                        </Form>
+                    )}
+
+                    {!signin && register && (
+                        <Form>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control type="email" name="email" value={email} placeholder="Enter email" onChange={(e) => onChangeData(e)} />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formBasicName">
+                                <Form.Label>First Name</Form.Label>
+                                <Form.Control type="text" name="firstName" value={firstName} placeholder="First Name" onChange={(e) => onChangeData(e)} />
+                            </Form.Group>
+
+
+                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" name="password" value={password} placeholder="Password" onChange={(e) => onChangeData(e)} />
+                            </Form.Group>
+
+                            <Button style={{ width: "100%" }} variant="warning" onClick={(e) => onSubmitRegister(e)} className="rounded-pill" type="submit">
+                                Register
+                            </Button>
+                        </Form>
+                    )}
+
+                </Modal.Body>
+            </Modal>
+        </Fragment>
+    )
 }
+
+Signup.propTypes = {}
+
+export default Signup

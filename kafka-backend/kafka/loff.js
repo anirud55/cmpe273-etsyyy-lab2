@@ -1,13 +1,13 @@
 var kafka = require('kafka-node')
 
-exports.getlatestOffset = (topic_name,callback) => {
+exports.getlatestOffset = (topicName,cb) => {
     var client  = new kafka.KafkaClient("localhost:2181")
 
     var offset = new kafka.Offset(client)
-    var loff;
+    var latestOffset;
     offset.fetch([{
-        topic:topic_name,partition:0,time:-1}], function(err,data){
-            loff = data[topic_name]['0'][0]
-            return callback(loff)
+        topic:topicName,partition:0,time:-1}], function(err,data){
+            latestOffset = data[topicName]['0'][0]
+            return cb(latestOffset)
         })
 }

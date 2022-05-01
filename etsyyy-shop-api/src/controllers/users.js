@@ -1,5 +1,5 @@
-const kafka = require('../../kafka/client')
-const actions = require('../../action/actions.json')
+const kafka = require('./../../kafka/client')
+const actions = require('./../../actions/actions.json')
 
 exports.createUser = async (req, res) => {
     const { firstName, email, password } = req.body

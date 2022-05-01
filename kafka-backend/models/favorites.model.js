@@ -10,7 +10,7 @@ const FavoritesSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    shop_id :{
+    seller_id :{
         type:String
     },
     product_name:{

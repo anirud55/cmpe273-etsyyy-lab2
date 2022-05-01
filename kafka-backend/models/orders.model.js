@@ -39,7 +39,7 @@ const OrderSchema = new mongoose.Schema({
     user_email: {
         type:String
     },
-    shop_id :{
+    seller_id :{
         type:String,
         required:true
     },
@@ -85,3 +85,7 @@ const OrderSchema = new mongoose.Schema({
 );
 
 module.exports = Order = mongoose.model('Order',OrderSchema)
+
+
+
+

@@ -1,12 +1,12 @@
-const prodmod = require('./../models/products.model')
+const ProductModel = require('./../models/products.model')
 const uuid = require('uuid').v4
 
 exports.createProduct = async (payload,cb) => {
-    const {shopId,name,category,description,price,quantity,img} = payload
+    const {sellerId,name,category,description,price,quantity,img} = payload
     try {
-        const product = new prodmod({
+        const product = new ProductModel({
             product_id: uuid(),
-            shop_id:shopId,
+            seller_id:sellerId,
             name,
             category,
             description,
@@ -28,7 +28,7 @@ exports.createProduct = async (payload,cb) => {
 exports.editProduct = async (payload,cb) => {
     const {productId,name,category,description,price,quantity,img} = payload
     try {
-        const product = await prodmod.findOne({product_id:productId}).exec()
+        const product = await ProductModel.findOne({product_id:productId}).exec()
         if(product){
             product.update({
                 name,category,description,price,quantity,img
@@ -43,9 +43,9 @@ exports.editProduct = async (payload,cb) => {
 }
 
 exports.getItems = async (payload,cb) => {
-    const {shopId} = payload
+    const {sellerId} = payload
     try {
-        const products = await prodmod.find({shop_id:shopId}).exec()
+        const products = await ProductModel.find({seller_id:sellerId}).exec()
         if(products){
             return cb(null,products)
         }
@@ -57,7 +57,7 @@ exports.getItems = async (payload,cb) => {
 
 exports.getProducts = async (payload,cb) => {
     try {
-        const products = await prodmod.find().exec()
+        const products = await ProductModel.find().exec()
 
         if(products){
             return cb(null,products)
@@ -72,7 +72,7 @@ exports.getProducts = async (payload,cb) => {
 exports.getProductById = async (payload,cb) => {
     const {productId} = payload
     try {
-        const product = await prodmod.findOne({product_id:productId}).exec()
+        const product = await ProductModel.findOne({product_id:productId}).exec()
         if(product){
             return cb(null,product)
         }
@@ -85,7 +85,7 @@ exports.getProductById = async (payload,cb) => {
 exports.getProductsByCategory = async (payload,cb) => {
     const {category} = payload
     try {
-        await prodmod.find({category},(err,data) => {
+        await ProductModel.find({category},(err,data) => {
             if(err) cb(err,null)
             if(data)
                 return cb(null,data)
@@ -98,7 +98,7 @@ exports.getProductsByCategory = async (payload,cb) => {
 exports.getFilteredProducts =async (payload,cb) => {
     const {category,price} = payload
     try {
-        await prodmod.find({category,price},(err,data)=>{
+        await ProductModel.find({category,price},(err,data)=>{
             if(err) return cb(err,null)
             return cb(null,data)
         })
@@ -110,7 +110,7 @@ exports.getFilteredProducts =async (payload,cb) => {
 exports.getFilteredProductsSortByPrice = async (payload,cb) => {
     const {category,price,order} = payload
     try {
-        await prodmod.find({category,price},(err,data)=>{
+        await ProductModel.find({category,price},(err,data)=>{
             if(err) return cb(err,null)
             return cb(null,data)
         })
@@ -122,7 +122,7 @@ exports.getFilteredProductsSortByPrice = async (payload,cb) => {
 exports.getFilteredProductsSortByQuantity = async (payload,cb) => {
     const {category,price,quantity,order} = payload
     try {
-        await prodmod.find({category,price,quantity},(err,data)=>{
+        await ProductModel.find({category,price,quantity},(err,data)=>{
             if(err) return cb(err,null)
             return cb(null,data)
         })
@@ -134,7 +134,7 @@ exports.getFilteredProductsSortByQuantity = async (payload,cb) => {
 exports.getFilteredProductsSortBySales = async (payload,cb) => {
     const {category,price,order} = payload
     try {
-        await prodmod.productsSortBySales({category,price,order},(err,data)=>{
+        await ProductModel.productsSortBySales({category,price,order},(err,data)=>{
             if(err) return cb(err,null)
             return cb(null,data)
         })
@@ -147,10 +147,10 @@ exports.searchProduct = async (payload,cb) => {
     console.log("Consuming: ",payload)
     const {searchParameter} = payload
     try {
-        const products = await prodmod.find({name:searchParameter}).exec()
+        const products = await ProductModel.find({name:searchParameter}).exec()
         cb(null,products)
     } catch (error) {
         return cb(error,null)
     }
 }
-prodmod.findById()
+ProductModel.findById()

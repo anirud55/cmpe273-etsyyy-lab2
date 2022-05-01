@@ -1,22 +1,22 @@
-const conn = require('./connection')
-const actions = require('./../action/actions.json')
+const kafkaConection = require('./connection')
+const actions = require('./../actions/actions.json')
 
-const user = require('./../services/users')
-const auth = require('./../services/auth')
+const UserService = require('./../services/users')
+const AuthService = require('./../services/auth')
 
-conn.getConsumer('users',(consumer) => {
+kafkaConection.getConsumer('users',(consumer) => {
     
-    var producer = conn.getProducer()
+    var producer = kafkaConection.getProducer()
 
     consumer.on('message', function(message){
         var data = JSON.parse(message.value)
         const {payload,correlationId} = data 
         const { action } = payload
         
-        console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Backend data consumption+=+=+=+=+=")
+        console.log("+=+=+=+=+=+=+=+=+=+=Backend data consumption+=+=+=+=+=\n",action)
 
         if(action == actions.CREATE_USER){
-            user.createUser(payload,(err,res) => {
+            UserService.createUser(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -41,13 +41,13 @@ conn.getConsumer('users',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.LOGIN){
-            auth.login(payload,(err,res) => {
+            AuthService.login(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -65,20 +65,20 @@ conn.getConsumer('users',(consumer) => {
                         correlationId:correlationId
                     }
                 }
-        
+                console.log(payload)
                 //Send Response to acknowledge topic
-                payloads = [
+                let payloads = [
                     {topic:'acknowledge',messages:JSON.stringify({"acknowledgementpayload":true,payload}),partition:0}
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.GET_USER_DETAILS){
-            auth.getUserDetails(payload,(err,res) => {
+            AuthService.getUserDetails(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -103,14 +103,14 @@ conn.getConsumer('users',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.UPDATE_USER){
             
-            user.updateUser(payload,(err,res) => {
+            UserService.updateUser(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -135,9 +135,10 @@ conn.getConsumer('users',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
     })
 })
+

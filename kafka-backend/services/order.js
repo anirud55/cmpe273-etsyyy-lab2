@@ -1,24 +1,24 @@
-const ordermod = require('./../models/orders.model')
-const usersmod  = require('./../models/users.model')
-const shopmod = require('./../models/shop.model')
-const cartmod = require('./../models/carts.model')
-const prodmod  = require('./../models/products.model')
+const OrderModel = require('./../models/orders.model')
+const UserModel  = require('./../models/users.model')
+const SellerModel = require('./../models/shop.model')
+const CartModel = require('./../models/carts.model')
+const ProductModel  = require('./../models/products.model')
 const uuid = require('uuid').v4
 
-exports.placeOrder = async (msg_payload,callback) => {
-    const {elasticId,productId,userId,price,quantity,giftWrap,giftDescription} = msg_payload
+exports.placeOrder = async (payload,cb) => {
+    const {elasticId,productId,userId,price,quantity,giftWrap,giftDescription} = payload
     try {
         const d = Date(Date.now)
         const date = d.toString().split(' ')[0] + ' '+ d.toString().split(' ')[1]+ ' ' + d.toString().split(' ')[2] + ' '+ d.toString().split(' ')[3]
 
-        const product = await prodmod.findOne({product_id:productId}).exec()
-        const user = await usersmod.findOne({id:userId}).exec()
-        const shop = await shopmod.findOne({shop_id:product.shop_id}).exec()
+        const product = await ProductModel.findOne({product_id:productId}).exec()
+        const user = await UserModel.findOne({id:userId}).exec()
+        const shop = await SellerModel.findOne({seller_id:product.seller_id}).exec()
         if(product && user){
-            const order = new ordermod({
+            const order = new OrderModel({
                 order_id:uuid(),
                 product_id:productId,
-                shop_id:product.shop_id,
+                seller_id:product.seller_id,
                 name:product.name,
                 category:product.category,
                 description:product.description,
@@ -39,26 +39,27 @@ exports.placeOrder = async (msg_payload,callback) => {
                 gift_description: giftDescription
             })
             order.save(async (err,data)=>{
-                if(err) return callback(err,null)
-                await cartmod.deleteOne({user_id:userId}).exec()
-                return callback(null,"Order Placed")
+                if(err) return cb(err,null)
+                await CartModel.deleteOne({user_id:userId}).exec()
+                return cb(null,"Order Placed")
             })
         }
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 }
 
-exports.myOrders = async (msg_payload,callback) => {
-    const {id} = msg_payload
+exports.myOrders = async (payload,cb) => {
+    const {id} = payload
+    console.log("user id: ",id)
     try {
-        const orders = await ordermod.find({id}).exec()
+        const orders = await OrderModel.find({user_id:id}).sort({"createdAt":-1}).exec()
         if(orders){
-            return callback(null,orders)
+            return cb(null,orders)
         }
-        return callback(null,[])
+        return cb(null,[])
     } catch (error) {
-        return callback(error,null)
+        return cb(error,null)
     }
 
 }

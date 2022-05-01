@@ -6,7 +6,7 @@ const ProductSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    shop_id :{
+    seller_id :{
         type:String
     },
     name:{
@@ -32,3 +32,4 @@ const ProductSchema = new mongoose.Schema({
 );
 
 module.exports = Product = mongoose.model('Product',ProductSchema)
+

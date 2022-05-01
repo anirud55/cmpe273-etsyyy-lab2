@@ -1,7 +1,7 @@
 const kafkaConection = require('./connection')
-const actions = require('../action/actions.json')
+const actions = require('./../actions/actions.json')
 
-const cart = require('../services/cart')
+const CartService = require('./../services/cart')
 
 kafkaConection.getConsumer('etsy',(consumer) => {
     
@@ -16,7 +16,7 @@ kafkaConection.getConsumer('etsy',(consumer) => {
 
         if(action == actions.ADD_TO_CART){
             
-            cart.addToCart(payload,(err,res) => {
+            CartService.addToCart(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -41,7 +41,7 @@ kafkaConection.getConsumer('etsy',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledged+=+=+=+=+=",data)
                 })
             })
         }

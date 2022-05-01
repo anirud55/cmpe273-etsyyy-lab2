@@ -13,7 +13,7 @@ const CartSchema = new mongoose.Schema({
     user_id:{
         type:String
     },
-    shop_id:{
+    seller_id:{
         type:String
     },
     product_name: {
@@ -37,4 +37,5 @@ const CartSchema = new mongoose.Schema({
 }, 
     {timestamps:true}
 );
+
 module.exports = Cart = mongoose.model('Cart',CartSchema)

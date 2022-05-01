@@ -112,3 +112,7 @@
 .EtsyNavbar {
   min-width: 100vh;
 }
+
+.product-card:hover {
+  color: 'lightgrey';
+}

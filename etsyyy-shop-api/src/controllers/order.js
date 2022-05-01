@@ -1,5 +1,5 @@
-const kafka = require('../../kafka/client');
-const actions = require('../../action/actions.json');
+const kafka = require('./../../kafka/client')
+const actions = require('./../../actions/actions.json')
 
 exports.placeOrder = async (req,res) => {
     const {elasticId,productId,userId,price,quantity,giftWrap,giftDescription} = req.body

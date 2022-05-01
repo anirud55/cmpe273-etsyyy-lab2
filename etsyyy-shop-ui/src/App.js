@@ -1,60 +1,90 @@
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-import HomePage from "./pages/Homepage";
-import ProductPage from "./pages/ProductPage";
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import { LinkContainer } from "react-router-bootstrap";
-import Badge from "react-bootstrap/Badge";
-import Nav from "react-bootstrap/Nav";
-import { useContext } from "react";
-import CartPage from "./pages/CartPage";
-import SignUpPage from "./pages/SignUpPage";
-import Footer from "./components/Footer";
-import EtsyNavbar from "./components/EtsyNavbar";
-import ProfilePage from "./pages/ProfilePage";
-import CreateShopPage from "./pages/CreateShopPage";
-import ShopPage from "./pages/ShopPage";
-import MyPurchasesPage from "./pages/MyPurchasesPage";
-import LoginModal from "./components/LoginModal";
-import FavoritesPage from "./pages/FavoritesPage";
-import SearchPage from "./pages/SearchPage";
-import Dropdown from "react-bootstrap/Dropdown";
-import { useDispatch } from "react-redux";
-import { currencychange } from "./actions/currencyAction";
+import { Fragment } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
+import './App.css';
+import NavBarLayout from './components/EtsyNavbar';
+import UserProfile from './pages/UserProfile';
+import EditProfile from './pages/ProfilePage';
+import NameYourShop from './pages/NameYourShop';
+import Shop from './pages/Shop';
+import setAuthToken from './Utilities/setAuthToken';
+import MyShops from './pages/ShopPage';
+import Dashboard from './pages/Homepage';
+import ItemOverview from './pages/ItemOverview';
+import Cart from './pages/CartPage';
+import PrivateRoute from './components/PrivateRoute';
+import ProductList from './components/ProductList';
+import Footer from './components/Footer';
+import MyOrders from './pages/MyPurchasesPage';
+
+if (localStorage.userdetails) {
+  setAuthToken(localStorage.userdetails)
+}
 
 function App() {
-  const currencyupdate = (e) => {
-    console.log(e);
-    dispatch(currencychange(e));
-  };
-  const dispatch = useDispatch();
-
   return (
-    <BrowserRouter>
-      <div className="d-flex flex-column site-container">
-        <header>
-          <EtsyNavbar />
-        </header>
-        <main>
-          <Container className="mt-3">
+    <Fragment>
+
+      <Card style={{ margin: 0, padding: 0 }}>
+        <Card.Body style={{ margin: 0, padding: 0, marginBottom: 10, height: "100%" }}>
+          <ToastContainer position='top-center' />
+          <Router>
+            <NavBarLayout />
             <Routes>
-              <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/createshop" element={<CreateShopPage />} />
-              <Route path="/shop/:shopname" element={<ShopPage />} />
-              <Route path="/search/:name" element={<SearchPage />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/myorders" element={<MyPurchasesPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
+
+              <Route path="/" element={<Dashboard />} />
+
+              <Route path="/dashboard" element={<Dashboard />} />
+
+              <Route path="/products" element={<ProductList />} />
+
+              <Route path="/products/:search" element={<ProductList />} />
+
+              <Route path="/profile" element={<PrivateRoute />}>
+                <Route path="/profile" element={<UserProfile />} />
+              </Route>
+
+              <Route path="/profile/edit" element={<PrivateRoute />}>
+                <Route path="/profile/edit" element={<EditProfile />} />
+              </Route>
+
+              <Route path="/shop" element={<PrivateRoute />}>
+                <Route path="/shop" element={<NameYourShop />} />
+              </Route>
+
+              <Route path="/shop/:name/home" element={<PrivateRoute />}>
+                <Route path="/shop/:name/home" element={<Shop />} />
+              </Route>
+
+              <Route path="/shop/myShops" element={<PrivateRoute />}>
+                <Route path="/shop/myShops" element={<MyShops />} />
+              </Route>
+
+              <Route path="/myOrders" element={<PrivateRoute />}>
+                <Route path="/myOrders" element={<MyOrders />} />
+              </Route>
+
+              <Route path="/item/:id/overview" element={<PrivateRoute />}>
+                <Route path="/item/:id/overview" element={<ItemOverview />} />
+              </Route>
+
+              <Route path="/cart" element={<PrivateRoute />}>
+                <Route path="/cart" element={<Cart />} />
+              </Route>
+
             </Routes>
-          </Container>
-        </main>
-        <Footer />
-      </div>
-    </BrowserRouter>
+          </Router>
+        </Card.Body>
+        <Card.Footer style={{ backgroundColor: "#1a125c", color: 'white' }}>
+          <Footer />
+        </Card.Footer>
+        <footer style={{ textAlign: 'center', padding: 3, position: "fixed", left: 0, bottom: 0, width: "100%" }}>
+
+        </footer>
+      </Card>
+
+    </Fragment>
   );
 }
 

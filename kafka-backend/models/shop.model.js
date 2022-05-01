@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const {ObjectId} = mongoose.Schema
 
-const ShopSchema = new mongoose.Schema({
-    shop_id :{
+const SellerSchema = new mongoose.Schema({
+    seller_id :{
         type:String,
         required:true
     },
@@ -38,4 +38,8 @@ const ShopSchema = new mongoose.Schema({
     {timestamps:true}
 );
 
-module.exports = Shop = mongoose.model('Shop',ShopSchema)
+module.exports = Seller = mongoose.model('Seller',SellerSchema)
+
+
+
+

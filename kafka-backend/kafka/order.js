@@ -1,23 +1,23 @@
-const conn = require('./connection')
-const actions = require('./../action/actions.json')
+const kafkaConection = require('./connection')
+const actions = require('./../actions/actions.json')
 
-const cart = require('./../services/cart')
-const order = require('./../services/order')
+const CartService = require('./../services/cart')
+const OrderService = require('./../services/order')
 
-conn.getConsumer('orders',(consumer) => {
+kafkaConection.getConsumer('orders',(consumer) => {
     
-    var producer = conn.getProducer()
+    var producer = kafkaConection.getProducer()
 
     consumer.on('message', function(message){
         var data = JSON.parse(message.value)
         const {payload,correlationId} = data 
         const { action } = payload
         
-        console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Backend data consumption+=+=+=+=+=")
+        console.log("+=+=+=+=+=+=+=+=+=+=Backend data consumption+=+=+=+=+=\n",action)
 
         if(action == actions.ADD_TO_CART){
             
-            cart.addToCart(payload,(err,res) => {
+            CartService.addToCart(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -42,7 +42,7 @@ conn.getConsumer('orders',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
@@ -50,7 +50,7 @@ conn.getConsumer('orders',(consumer) => {
 
         if(action == actions.GET_CART_ITEMS){
             
-            cart.getCartItems(payload,(err,res) => {
+            CartService.getCartItems(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -75,14 +75,14 @@ conn.getConsumer('orders',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.REMOVE_FROM_CART){
             
-            cart.removeCartItem(payload,(err,res) => {
+            CartService.removeCartItem(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -107,14 +107,14 @@ conn.getConsumer('orders',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.PLACE_ORDER){
             
-            order.placeOrder(payload,(err,res) => {
+            OrderService.placeOrder(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -139,14 +139,14 @@ conn.getConsumer('orders',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }
 
         if(action == actions.MY_ORDERS){
             
-            order.myOrders(payload,(err,res) => {
+            OrderService.myOrders(payload,(err,res) => {
                 var payload = {}
                 if(err){
                     console.log("Serivce failed, ERR: ",err)
@@ -171,7 +171,7 @@ conn.getConsumer('orders',(consumer) => {
                 ]
                 producer.send(payloads,(err,data)=>{
                     if(err) throw err
-                    console.log("+=+=+=+=+=Kafka_Logs+=+=+=+=+=Acknowledeged+=+=+=+=+=\n",data)
+                    console.log("+=+=+=+=+=+=+=+=+=+=Acknowledged+=+=+=+=+=\n",data)
                 })
             })
         }

@@ -1,10 +1,10 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/secrete.json');
+const jwt = require('jsonwebtoken')
+const config = require('./../config/secrete.json')
 
 module.exports = (req,res,next) => {
 
     //Get token from the headers
-    const token = req.header('access-token');
+    const token = req.header('access-token')
 
     if(!token){
         return res.status(401).json({message:'Unauthorised access'})
@@ -12,9 +12,9 @@ module.exports = (req,res,next) => {
 
     //Verify token
     try {
-        const decoded = jwt.verify(token,config.jwtSecret);
-        req.user = decoded.user;
-        next();
+        const decoded = jwt.verify(token,config.jwtSecret)
+        req.user = decoded.user
+        next()
     } catch (error) {
         return res.status(401).json({message:'Unauthorised access'})
     }

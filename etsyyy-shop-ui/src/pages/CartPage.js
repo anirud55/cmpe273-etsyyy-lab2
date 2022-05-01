@@ -1,193 +1,217 @@
-import { Component, useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import ListGroup from "react-bootstrap/ListGroup";
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import { Link } from "react-router-dom";
-import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { BACKEND } from "../constants/userConstants";
+import axios from 'axios'
+import React, { Fragment, useEffect, useState } from 'react'
+import { Card, Row, Col, Image, Button, Form } from 'react-bootstrap'
+import { Navigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import constants from './../../src/constants/userConstants.json'
+
+const Cart = () => {
+
+    const [cartItems, setCartItems] = useState([])
+    const [userId, setUserId] = useState()
+    const [orderPlaced, setOrderPlaced] = useState(false)
+    const [currency, setCurrency] = useState()
+    const [subtotal, setsubtotal] = useState(0)
+
+    const [giftDescShow, setGiftDescShow] = useState(false)
 
 
-function CartPage(props) {
-  const navigate = useNavigate();
-  const [cartItems, setcartitems] = useState([]);
-  const [message, setmessage] = useState("");
-  const currency = useSelector((state) => state.currency.currency);
-  const userInfo = useSelector((state) => state.userInfo);
+    useEffect(async () => {
+        const { data } = await axios.post(constants.uri + '/users/auth')
+        const userId = data.id
+        setUserId(data.id)
+        const res = await axios.post(constants.uri + '/order/cart-items', { userId })
+        setCartItems(res.data)
+        const items = res.data
 
-  useEffect(() => {
-    if (localStorage.getItem("cartItems") != null) {
-      setcartitems(
-        cartItems.concat(JSON.parse(localStorage.getItem("cartItems")))
-      );
+        //calculate subtotal
+        var total = 0
+        items.map(item => {
+            total = total + item.quantity * item.price
+        })
+        setsubtotal(total.toFixed(2))
+
+        const curr = window.localStorage.getItem('country_currency')
+        setCurrency(curr.split(',')[1])
+    }, [])
+
+    const placeOrder = async (e) => {
+        e.preventDefault()
+        var i = 0;
+        cartItems.map(async item => {
+            i++
+            console.log(item, "----------------------------")
+            if(parseInt(item.quantity) > 0){
+                const res = await axios.post(constants.uri + '/order/place-order', {
+                    elasticId: item.elastic_id,
+                    productId: item.product_id,
+                    userId,
+                    price: item.price,
+                    quantity: item.quantity,
+                    giftWrap: item.giftWrap,
+                    giftDescription: item.giftDecscription
+                })
+            }
+
+            console.log(cartItems.length, i)
+            if (i == cartItems.length) {
+                toast.success("Order Placed")
+                setOrderPlaced(true)
+            }
+           // window.localStorage.setItem('cart', window.localStorage.getItem('cart') - 1)
+        })
+        toast.success()
     }
-  }, []);
 
-  const continueshopHandler = (e) => {
-    navigate("/");
-  }
+    const removeFromCart = async (item) => {
+        console.log(item)
+        console.log(userId)
+        const res = await axios.post(constants.uri + '/order/cart/remove-item', { userId, productId: item.product_id })
+        if (res.data) {
+            setCartItems(cartItems.filter(ele => ele.id != item.id))
+            toast('Item removed from cart')
 
-  const checkoutHandler = (e) => {
-    if (
-      userInfo[0].country === "" ||
-      userInfo[0].city === "" ||
-      userInfo[0].address === ""
-    ) {
-      setmessage("Please update your full address in your profile.");
-      return;
-    }
-    //prevent page from refresh
-    // console.log(cartItems);
-    e.preventDefault();
-    cartItems.map((item) => {
-      const data = {
-        name: item.name,
-        price: item.price * item.quantity,
-        image: item.image,
-        shopname: item.shopname,
-        currency: currency,
-        quantity: item.quantity,
-        date: new Date().toLocaleDateString(),
-        email: localStorage.getItem("email"),
-      };
+            //Calculate subtotal
+            var total = 0
+            cartItems.filter(ele => ele.id != item.id).map(item => {
+                total = total + item.quantity * item.price
+            })
+            setsubtotal(total.toFixed(2))
 
-      axios.defaults.withCredentials = true;
-      //make a post request with the user data
-      axios.post(BACKEND + "/createorder", data).then((response) => {
-        console.log("Status Code : ", response.status);
-        if (response.status === 200 && response.data === "order Created") {
-          setmessage("Order Created");
-          localStorage.removeItem("cartItems");
-        } else {
-          setmessage(response.data);
-          localStorage.removeItem("cartItems");
+            window.localStorage.setItem('cart', window.localStorage.getItem('cart') - 1)
         }
-      });
-    });
-    localStorage.removeItem("cartItems");
-    navigate("/myorders");
-  };
+    }
 
-  return cartItems.length === 0 ? (
-    <Button
-      type="button"
-      variant="primary"
-      disabled={cartItems.length === 0}
-      style={{"width": "60%",
-      "border": "none",
-      "padding": "15px 20px",
-      "background-color": "teal",
-      "color": "white",
-      "cursor": "pointer"}}
-    >
-      CONTINUE SHOPPING
+    const giftWrap = (e, item) => {
+        e.preventDefault()
+        if (e.target.checked) {
+            setGiftDescShow(true)
+            item.giftWrap = true
+        } else {
+            setGiftDescShow(false)
+            item.giftWrap = false
+        }
+    }
 
-    </Button>
-  ) : (
-    <div>
-      <Helmet>
-        <title style={{ "font-weight" : "300",
-  "text-align": "center"}}>Your BAG</title>
-      </Helmet>
-      <Row>
-        <Col md={8}>
-          <ListGroup>
-            <ListGroupItem>
-              <Row>
-                <Col md={6}>
-                  <h5>Product</h5>
-                </Col>
-                <Col md={2}>
-                  <h5>Quantity</h5>
-                </Col>
-                <Col md={2}>
-                  <h5>Price</h5>
-                </Col>
-                <Col md={2}>
-                  <h5>Total Price</h5>
-                </Col>
-              </Row>
-            </ListGroupItem>
+    const onChangeQuanity = (e,item) => {
+        e.preventDefault()
+        item.quantity = e.target.value
+        var total = 0
+        cartItems.map(item => {
+            total = total + item.quantity * item.price
+        })
+        setsubtotal(total.toFixed(2))
+    }
 
-            {cartItems.map((item) => (
-              <ListGroup.Item key={item.id}>
-                <Row className="align-items-center">
-                  <Col md={6}>
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="img-fluid rounded img-thumbnail"
-                      style={{ width: "70px", height: "70px" }}
-                    ></img>{" "}
-                    <Link to={`/product/${item.id}`}>{item.name}</Link>
-                  </Col>
-                  <Col md={2}>
-                    <span>{item.quantity}</span>{" "}
-                  </Col>
-                  <Col md={2}>
-                    {currency} {item.price}
-                  </Col>
-                  <Col md={2}>
-                    {currency}{" "}
-                    {parseFloat(item.price * item.quantity).toFixed(2)}
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Col>
-        <Col md={4}>
-          <Card>
-            <Card.Body>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <h3>
-                    Subtotal (
-                    {cartItems.reduce(
-                      (a, c) => parseInt(a) + parseInt(c.quantity),
-                      0
-                    )}{" "}
-                    items) : {currency}
-                    {parseFloat(
-                      cartItems.reduce((a, c) => a + c.price * c.quantity, 0)
-                    ).toFixed(2)}
-                  </h3>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <div className="d-grid">
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={checkoutHandler}
-                      disabled={cartItems.length === 0}
-                      style={{width: "60%",
-                      border: "none",
-                      padding: "15px 20px",
-                      "background-color": "teal",
-                      color: "white",
-                      cursor: "pointer",
-                      "margin-bottom": "10px"}}
-                    >
-                      CHECKOUT NOW
-                    </Button>
-                  </div>
-                  <br></br>
-                  <div class={message ? "visible" : "invisible"}>
-                    <div>{message}</div>
-                  </div>
-                </ListGroup.Item>
-              </ListGroup>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </div>
-  );
+    const giftDescription = (e, item) => {
+        e.preventDefault()
+        if (e.target.value) {
+            item.giftDecscription = e.target.value
+        }
+    }
+
+    if (orderPlaced) {
+        return <Navigate to="/myOrders" />
+    }
+
+    return (
+        <Fragment>
+            <Row style={{ marginLeft: '10%', marginRight: '10%', marginTop: 25 }}>
+                <Col sm={8}>
+                    <Card>
+                        <Card.Body>
+                            <Row><h4 style={{ textAlign: 'center' }}>Cart Items</h4></Row>
+                            <hr />
+                            {cartItems && cartItems.map(item => (
+                                <Row>
+                                    <Col onSubmit={3}>
+                                        <Image src={item.img} />
+                                    </Col>
+                                    <Col sm={5}>
+                                        <Row><h4>{item.product_name}</h4></Row>
+                                        <Row>
+                                            <Col><span>Price per Unit:</span></Col>
+                                            <Col> <span>{item.price}{' '}<span style={{ fontWeight: 'lighter' }}>{currency}</span></span></Col>
+                                        </Row>
+                                        <Row>
+                                            <Col><span>Quantity:</span></Col>
+                                            <Col> <span>
+                                                {item.quantity}
+                                                &nbsp;
+                                                <Form.Group className="mb-3" controlId="formBasicEmail">
+                                                    <Form.Control type="text" placeholder="Quantity"   onChange={(e)=>onChangeQuanity(e,item)}/>
+                                                </Form.Group>
+                                            </span></Col>
+                                        </Row>
+                                        <br />
+                                        <Row>
+                                            <Col><span style={{ fontWeight: 'bold' }}>Total:</span></Col>
+                                            <Col> <span style={{ fontWeight: 'bold' }}>{(item.quantity * item.price).toFixed(2)}</span></Col>
+                                        </Row>
+                                        <br />
+                                        <Row>
+                                            <Col>
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    label="Gift wrap"
+                                                    onChange={(e) => giftWrap(e, item)}
+                                                />
+                                            </Col>
+                                            <Col>
+                                            </Col>
+                                        </Row>
+                                        {giftDescShow && (<Row>
+                                            <span>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder='Gift Description'
+                                                    onChange={(e) => giftDescription(e, item)}
+                                                />
+                                            </span>
+                                        </Row>
+                                        )}
+                                        <br />
+                                        <Row>
+                                            <Button variant='outline-danger' onClick={() => removeFromCart(item)} className='rounded-pill'>Remove from Cart</Button>
+                                        </Row>
+                                    </Col>
+                                    <Col sm={1}>
+
+                                    </Col>
+                                    <hr />
+                                </Row>
+                            ))}
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col sm={4}>
+                    <Card>
+                        <Card.Body>
+                            <Row><h4 style={{ textAlign: 'center' }}>Total</h4></Row>
+                            <hr />
+                            <Row>
+                                <Col><h6>Sub Total:</h6></Col>
+                                <Col><span style={{ fontWeight: 'lighter' }}>{subtotal}{' '}<span style={{ fontWeight: 'lighter' }}>{currency}</span></span></Col>
+                            </Row>
+                            <Row>
+                                <Col><h6>Delivery:</h6></Col>
+                                <Col><span style={{ fontWeight: 'lighter' }}>0.00{' '}<span style={{ fontWeight: 'lighter' }}>{currency}</span></span></Col>
+                            </Row>
+                            <br />
+                            <Row>
+                                <Col><h6>Total:</h6></Col>
+                                <Col><span style={{ fontWeight: 'lighter' }}>{subtotal}{' '}<span style={{ fontWeight: 'lighter' }}>{currency}</span></span></Col>
+                            </Row>
+                            <br />
+                            <Row>
+                                <Button variant='success' onClick={(e) => { placeOrder(e) }} className='rounded-pill'>Place Order</Button>
+                            </Row>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Fragment>
+    )
 }
 
-export default CartPage;
+export default Cart
